@@ -3,9 +3,6 @@
 Juego cozy de cafetería hecho con Python y Pygame para Programación 2 (Facultad de Diseño, Universidad ORT Uruguay).
 Sos un Licenciado en Diseño recién recibido que, convertido en gato, reemplaza a Don Salmón durante 5 días en su cafetería.
 
-**Autor:** Ignacio López (N° 78200) - Grupo LT M4 A
-**Repositorio:** https://github.com/TU-USUARIO/michi-cafe-2d   <!-- COMPLETAR con tu enlace real -->
-
 ## Cómo se juega
 
 **Objetivo:** juntar la meta de dinero de cada día (Día 1: $50, Día 2: $120, Día 3: $220, Día 4: $350, Día 5: $500) y sobrevivir los 5 días.
@@ -67,8 +64,3 @@ Según las pautas del obligatorio, se declara el uso de IA:
 
 - **Herramienta:** Claude (Anthropic).
 - **Contexto de uso:** generación inicial del código del juego a partir de mi especificación (concepto, historia, mecánicas, arquitectura de módulos y reglas), propuesta de estructura del informe, borrador de textos de documentación y composición del afiche.
-- **Revisión:** revisé, probé y comprendí el código antes de entregarlo; los errores que contenga son mi responsabilidad. La idea, la historia, los personajes, las mecánicas, la estética y el balance del juego son propios.
-
-## Créditos
-
-Idea, diseño y dirección: Ignacio López. Inspirado en la estructura de los juegos de Papa Louie y en el estilo de los cozy games.
