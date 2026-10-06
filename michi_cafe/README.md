@@ -34,7 +34,7 @@ Cada pedido aparece en un globito sobre el cliente. Entregalo en su mesa y despu
 ### Ropa de la tienda
 - **Delantal gastronómico:** más dinero por pedido (+20%).
 - **Cofia / sombrero de chef:** la bandeja carga 2 o 3 ítems.
-- **Calzado antideslizante / zapatillas de cocina:** más velocidad (+15% / +30%).
+- **Calzado antideslizante / championes de cocina:** más velocidad (+15% / +30%).
 
 ## Instalación y ejecución
 
