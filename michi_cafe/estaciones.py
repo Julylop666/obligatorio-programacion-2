@@ -6,7 +6,7 @@ una tupla (mensaje, sonido, dinero_ganado). Así main.py las trata igual.
 import pygame
 from ajustes import (COLORES_PASTEL as C, ESTACIONES_RECT, DIA_ESTACION, CENTROS_MESAS, TAM_MESA,
                      DESPLAZAMIENTO_ASIENTO, TAZA_VACIA, TAZA_LECHE, TAZA_CALIENTE, ESPERANDO,
-                     PX_MUNDO, PX_GATO)
+                     PX_MUNDO, PX_GATO, PRECIOS)
 from dibujo import dibujar_item, pixelar, oscurecer
 
 # ---------------------------------------------------------------- íconos pixel art de las estaciones
@@ -319,11 +319,12 @@ class EstacionBasura(Estacion):
         pantalla.blit(sprite, sprite.get_rect(midbottom=self.punto_apoyo()))
 
     def interactuar(self, jugador):
-        """Descarta un único ítem de la bandeja."""
+        """Descarta un único ítem de la bandeja y pierde su valor."""
         if not jugador.bandeja:
             return "La bandeja ya está vacía.", None, 0
-        jugador.bandeja.pop()
-        return "Ítem descartado.", "miau", 0
+        item = jugador.bandeja.pop()
+        costo = PRECIOS.get(item, 0)
+        return "Ítem descartado.", "miau", -costo
 
 
 # ---------------------------------------------------------------- mesas

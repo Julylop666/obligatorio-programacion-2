@@ -15,6 +15,15 @@ class CambiosJuegoTest(unittest.TestCase):
         self.assertEqual(resultado[0], "Ítem descartado.")
         self.assertEqual(jugador.bandeja, ["cafe"])
 
+    def test_tacho_descuenta_el_precio_del_item(self):
+        jugador = Jugador((240, 170, 100))
+        jugador.bandeja = ["cafe"]
+
+        resultado = EstacionBasura().interactuar(jugador)
+
+        self.assertEqual(resultado, ("Ítem descartado.", "miau", -12))
+        self.assertEqual(jugador.bandeja, [])
+
     def test_syrup_desbloquea_en_el_dia_3(self):
         estaciones = crear_estaciones(2)
         self.assertNotIn("syrup", [estacion.clave for estacion in estaciones if estacion.activa])
@@ -33,7 +42,7 @@ class CambiosJuegoTest(unittest.TestCase):
 
     def test_syrup_disponible_desde_el_dia_3(self):
         self.assertEqual(DIA_ITEM["cafe_syrup"], 3)
-        self.assertEqual(TIENDA["zapatillas_1"]["slot"], "calzado")
+        self.assertEqual(TIENDA["championes_1"]["slot"], "calzado")
 
     def test_basura_esta_a_la_derecha_y_frente_al_salon(self):
         self.assertEqual(ESTACIONES_RECT["basura"], (830, 500, 104, 72))
@@ -44,8 +53,8 @@ class CambiosJuegoTest(unittest.TestCase):
 
     def test_frutilla_cubre_el_centro_de_la_medialuna(self):
         sprite = __import__("dibujo", fromlist=["ITEMS_PIXEL"]).ITEMS_PIXEL["medialuna_frutilla"]
-        self.assertEqual(sprite[2], ".OYYYYYYYYO.")
-        self.assertEqual(sprite[3], "OYYYYRRRYYYYO")
+        self.assertEqual(sprite[2], ".OYRDRRDRYO.")
+        self.assertEqual(sprite[3], "OYRO.OO.ORYO")
 
 
 if __name__ == "__main__":
