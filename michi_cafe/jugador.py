@@ -1,8 +1,8 @@
 """jugador.py - Clase Jugador: el gato barista que controlamos."""
 import pygame
 from ajustes import (TAM_JUGADOR, VELOCIDAD_BASE, CAPACIDAD_BASE, POS_INICIAL,
-                     ZONA_JUEGO, TAZA_VACIA, TIENDA)
-from dibujo import dibujar_gato, dibujar_item
+                     ZONA_JUEGO, TAZA_VACIA, TIENDA, COLOR_OJOS_JUGADOR)
+from dibujo import dibujar_gato, dibujar_bandeja, frame_caminata
 
 
 def leer_direccion(teclas):
@@ -35,6 +35,10 @@ class Jugador(pygame.sprite.Sprite):
         # estado de trabajo
         self.bandeja = []             # ítems que lleva ("cafe", "medialuna")
         self.taza = TAZA_VACIA        # progreso del café con leche
+        # animación: si camina, hacia dónde mira y el tiempo para alternar las patitas
+        self.camina = False
+        self.mirando = 1
+        self.t_anim = 0.0
         # posición (float) y rect para colisiones
         self.rect = pygame.Rect(0, 0, TAM_JUGADOR, TAM_JUGADOR)
         self.pos = pygame.math.Vector2(POS_INICIAL)
@@ -75,7 +79,15 @@ class Jugador(pygame.sprite.Sprite):
 
         Se mueve primero en X y después en Y para poder "deslizar" contra las mesas.
         """
-        paso = leer_direccion(teclas) * self.velocidad * dt
+        direccion = leer_direccion(teclas)
+        self.camina = direccion.length_squared() > 0
+        if self.camina:
+            self.t_anim += dt
+            if direccion.x != 0:
+                self.mirando = 1 if direccion.x > 0 else -1
+        else:
+            self.t_anim = 0.0
+        paso = direccion * self.velocidad * dt
         for eje in ("x", "y"):
             anterior = self.pos.copy()
             if eje == "x":
@@ -90,8 +102,10 @@ class Jugador(pygame.sprite.Sprite):
         self.pos.update(self.rect.center)
 
     def dibujar(self, pantalla):
-        """Dibuja al gato con su ropa y, arriba de la cabeza, lo que lleva en la bandeja."""
+        """Dibuja al gato con su ropa y la bandeja en la mano, con los ítems que lleva encima."""
         cx, cy = self.rect.centerx, self.rect.centery - 6
-        dibujar_gato(pantalla, (cx, cy), self.color, self.ropa)
-        for i, item in enumerate(self.bandeja):
-            dibujar_item(pantalla, item, (cx - 14 * (len(self.bandeja) - 1) + i * 28, cy - 62), 0.9)
+        frame = frame_caminata(self.t_anim, self.camina)
+        dibujar_gato(pantalla, (cx, cy), self.color, self.ropa, ojos=COLOR_OJOS_JUGADOR,
+                     frame=frame, mirando=self.mirando)
+        dibujar_bandeja(pantalla, (cx, cy), self.bandeja, self.capacidad_bandeja, self.color,
+                        self.mirando, frame)

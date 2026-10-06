@@ -10,6 +10,8 @@ import pygame
 # ---------------------------------------------------------------- rutas
 RUTA_BASE = os.path.dirname(os.path.abspath(__file__))
 RUTA_SONIDOS = os.path.join(RUTA_BASE, "sonidos")
+RUTA_IMAGENES = os.path.join(RUTA_BASE, "imagenes")      # ilustraciones opcionales (ver imagenes/LEEME.txt)
+RUTA_FUENTE = os.path.join(RUTA_BASE, "fuentes", "Jersey15.ttf")
 
 # ---------------------------------------------------------------- ventana
 ANCHO = 960
@@ -40,6 +42,15 @@ COLORES_PASTEL = {
     "sombra": (210, 185, 160),
     "billete": (150, 205, 150),
     "resaltado": (255, 255, 255),
+    "contorno": (62, 42, 50),          # borde oscuro de los sprites pixel art
+    "madera_oscura": (150, 104, 76),
+    "metal": (206, 210, 220),
+    "metal_oscuro": (150, 156, 170),
+    "caramelo": (150, 80, 30),
+    "chocolate": (100, 58, 40),
+    "cielo_a": (255, 214, 200),
+    "cielo_b": (255, 232, 210),
+    "cielo_c": (196, 222, 244),
 }
 
 # Pelajes entre los que elige el jugador (nombre, color)
@@ -50,8 +61,17 @@ PELAJES = [
     ("Negro", (78, 72, 84)),
 ]
 COLOR_DON_SALMON = (236, 150, 118)
-COLORES_CLIENTES = [(240, 170, 100), (172, 178, 190), (246, 226, 192),
-                    (200, 160, 130), (255, 205, 205), (190, 170, 220)]
+# Los clientes NO usan el color crema: se perdía contra el piso.
+COLORES_CLIENTES = [(240, 170, 100), (172, 178, 190), (200, 160, 130),
+                    (255, 205, 205), (190, 170, 220), (150, 110, 90)]
+COLOR_OJOS_JUGADOR = (70, 205, 110)     # el protagonista tiene ojos verdes (contrasta con el gato negro)
+COLOR_OJOS_CLIENTE = (50, 35, 45)
+
+# ---------------------------------------------------------------- pixel art
+# Cada "pixel" del arte se dibuja como un cuadrado de PX x PX píxeles de pantalla.
+PX_GATO = 3                   # tamaño del pixel de los gatos
+PX_ITEM = 2                   # tamaño del pixel de los ítems (café, medialunas)
+PX_MUNDO = 4                  # tamaño del pixel de muebles, fondos y escenas
 
 # ---------------------------------------------------------------- estados del juego
 HISTORIA_INTRO = "HISTORIA_INTRO"
@@ -83,11 +103,15 @@ ZONA_JUEGO = pygame.Rect(20, 175, 920, 445)
 
 # ---------------------------------------------------------------- estaciones y mesas
 ESTACIONES_RECT = {
-    "leche": (70, 80, 120, 70),
-    "vapor": (230, 80, 120, 70),
-    "espresso": (390, 80, 120, 70),
-    "medialunas": (550, 80, 120, 70),
+    "leche": (30, 80, 104, 72),
+    "vapor": (170, 80, 104, 72),
+    "espresso": (310, 80, 104, 72),
+    "medialunas": (450, 80, 104, 72),
+    "chispas": (590, 80, 104, 72),
+    "dulce": (730, 80, 104, 72),
 }
+# día desde el cual se puede usar cada estación de topping
+DIA_ESTACION = {"chispas": 2, "dulce": 3}
 CENTROS_MESAS = [(300, 320), (500, 320), (700, 320),
                  (300, 500), (500, 500), (700, 500)]
 TAM_MESA = 80
@@ -103,8 +127,16 @@ TIEMPO_SENTADO = 1.0          # segundos mirando el menú antes de pedir
 MAX_COLA = 4                  # si 4 vecinos quedan sin mesa, el local se desborda (derrota)
 
 # ---------------------------------------------------------------- menú y niveles
-PRECIOS = {"cafe": 12, "medialuna": 8}
-NOMBRES_ITEMS = {"cafe": "Café con leche", "medialuna": "Medialuna"}
+PRECIOS = {"cafe": 12, "medialuna": 8, "medialuna_chispas": 10, "medialuna_dulce": 11}
+NOMBRES_ITEMS = {"cafe": "Café con leche", "medialuna": "Medialuna",
+                 "medialuna_chispas": "Medialuna con chispas", "medialuna_dulce": "Medialuna con dulce de leche"}
+# día desde el cual los clientes pueden pedir cada ítem
+DIA_ITEM = {"cafe": 1, "medialuna": 1, "medialuna_chispas": 2, "medialuna_dulce": 3}
+# avisos al empezar los días en que se desbloquea algo nuevo
+AVISOS_DESBLOQUEO = {
+    2: "¡Novedad! Medialunas con chispas de chocolate.\nSacá una medialuna y pasala por la estación de Chispas.",
+    3: "¡Novedad! Medialunas con dulce de leche.\nSacá una medialuna y pasala por la estación de Dulce de leche.",
+}
 
 # meta de recaudación por día, ritmo de llegada de clientes y máximo de ítems por pedido
 NIVELES = {
@@ -144,11 +176,15 @@ ARCHIVOS_SONIDO = {
     "caja": "caja.wav",
 }
 ARCHIVO_MUSICA = "musica_lofi.wav"
-VOLUMEN_EFECTOS = 0.6
-VOLUMEN_MUSICA = 0.25
+VOLUMEN_EFECTOS = 0.9
+VOLUMEN_MUSICA = 0.35
 
 # ---------------------------------------------------------------- textos
 DURACION_AVISO = 2.5          # segundos que se ve un mensaje en pantalla
+DURACION_AVISO_DIA = 5.0      # el aviso de inicio de día dura más (por si hay novedades)
+BOTON_PAUSA = (156, 14, 36, 36)   # rect del botón de pausa (en el HUD)
+
+ESCENAS_VINETAS = ["escena_calle", "escena_salmon", "escena_delantal"]   # una ilustración por viñeta
 
 VINETAS = [
     ("El drama profesional",
