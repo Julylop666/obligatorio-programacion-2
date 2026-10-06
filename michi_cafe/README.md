@@ -41,7 +41,7 @@ Cada pedido aparece en un globito sobre el cliente. Entregalo en su mesa y despu
 Requiere Python 3.9 o superior.
 
 ```bash
-pip install pygame
+pip install -r requirements.txt
 python main.py
 ```
 
