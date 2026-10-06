@@ -274,7 +274,7 @@ class EstacionFrutilla(EstacionTopping):
 
     def __init__(self):
         """Crea la estación de cobertura de frutilla."""
-        super().__init__("frutilla", "Cobertura de frutilla", "medialuna_frutilla", _PAL_FRUTILLA,
+        super().__init__("frutilla", "Frutilla", "medialuna_frutilla", _PAL_FRUTILLA,
                          "¡Medialuna con frutilla!")
 
 
@@ -292,10 +292,10 @@ class EstacionSyrup(Estacion):
 
     def __init__(self):
         """Crea la estación de vainilla."""
-        super().__init__("syrup", "Syrup de vainilla")
+        super().__init__("syrup", "Vainilla")
 
     def dibujar_icono(self, pantalla):
-        """Dibuja un frasco de jarabe junto a una cuchara."""
+        """Dibuja un frasco de jarabe de vainilla."""
         self.dibujar_grilla(pantalla, _ICONO_FRASCO, _PAL_SYRUP)
 
     def interactuar(self, jugador):

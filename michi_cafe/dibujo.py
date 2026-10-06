@@ -97,7 +97,7 @@ _PAL_ITEM = {
     "D": (203, 132, 58),
     "K": C["chocolate"],
     "Q": C["caramelo"],
-    "V": (198, 153, 108),
+    "V": (245, 210, 110),  # Amarillo cálido/dorado para el jarabe de vainilla
     "S": (155, 112, 55),
     "R": (240, 110, 150),  # Cobertura rosa de frutilla
 }
@@ -112,12 +112,13 @@ _CAFE = (
     "..OOOOOO..",
 )
 
+# Café con chorro claro de syrup de vainilla arriba
 _CAFE_SYRUP = (
-    ".OOOOOOO..",
-    "OMMCCMMO..",
-    "OWWWWWWOOO",
+    "..VVVV....",
+    "OMVVVVMMO.",
+    "OWWVVVWWOO",
     "OWWWWWWO.O",
-    "OWWWWWWSOO",
+    "OWWWWWWOOO",
     ".OWWWWOO..",
     "..OOOOOO..",
 )
@@ -140,7 +141,7 @@ def _con_puntos(grilla, puntos, letra):
     return tuple("".join(fila) for fila in filas)
 
 
-# Cobertura de frutilla (rosa "R") en el centro de la medialuna, exactamente con el mismo formato del dulce de leche
+# Cobertura de frutilla (rosa "R") en el centro de la medialuna, estilo dulce de leche
 _MEDIALUNA_FRUTILLA = _con_puntos(
     _MEDIALUNA,
     [(4, 1), (5, 1), (6, 1), (7, 1), (3, 2), (5, 2), (6, 2), (8, 2), (2, 3), (9, 3)],
@@ -152,7 +153,6 @@ ITEMS_PIXEL = {
     "cafe_syrup": _CAFE_SYRUP,
     "medialuna": _MEDIALUNA,
     "medialuna_frutilla": _MEDIALUNA_FRUTILLA,
-    # dulce de leche: baño de caramelo con un par de gotas
     "medialuna_dulce": _con_puntos(_MEDIALUNA, [(4, 1), (5, 1), (6, 1), (7, 1), (3, 2), (5, 2), (6, 2),
                                                 (8, 2), (2, 3), (9, 3)], "Q"),
 }
@@ -178,8 +178,6 @@ def dibujar_item(pantalla, item, centro, escala=1.0, base=False, px=None):
 ALTO_SOMBRERO = 6      # filas libres arriba de la cabeza para los gorros
 _ZAPATOS = [None, (120, 190, 235), (240, 120, 150)]    # color según el nivel de calzado
 
-# Cabeza y cuerpo (16 x 15). O = contorno, F = pelaje, L = pelaje claro, E = ojo,
-# P = interior de la oreja, N = nariz.
 _GATO_CUERPO = (
     "..OO........OO..",
     ".OFFO......OFFO.",
@@ -204,22 +202,22 @@ _COLA_PELO = [(13, 14), (14, 14), (14, 13), (14, 12), (14, 11)]
 _COLA_BORDE = [(13, 13), (15, 11), (15, 12), (15, 13), (15, 14), (13, 15), (14, 15), (14, 10)]
 _ANTEOJOS = ([(x, 4) for x in (3, 4, 5, 6, 9, 10, 11, 12)] + [(x, 7) for x in (3, 4, 5, 6, 9, 10, 11, 12)]
              + [(x, y) for x in (3, 6, 9, 12) for y in (5, 6)] + [(7, 5), (8, 5)])
-# prendas (letras: W blanco, P rosa, A delantal rosa, V chaleco)
+
 _COFIA = (".....OOOOOO.....",
           "....OWWWWWWO....",
-          "....OPPPPPPO....")                    # empieza una fila arriba de la cabeza
+          "....OPPPPPPO....")
 _SOMBRERO = ("....OOOOOOOO....",
              "...OWWWWWWWWO...",
              "..OWWWWWWWWWWO..",
              "..OWWWWWWWWWWO..",
              "...OWWWWWWWWO...",
              "....OWWWWWWO....",
-             "....OPPPPPPO....")                 # empieza cinco filas arriba de la cabeza
+             "....OPPPPPPO....")
 _DELANTAL = ("......WWWW......",
              "....AAAAAAAA....",
              "....AAAAAAAA....",
              "....AAWWWWAA....",
-             "....AAWWWWAA....")                 # filas 10 a 14 del cuerpo
+             "....AAWWWWAA....")
 _CHALECO = ("................",
             "....VVV..VVV....",
             "....VVV..VVV....",
@@ -231,7 +229,7 @@ _CHALECO = ("................",
 def _construir_gato(color, ojos, gorro, delantal, calzado, lentes, chaleco, frame):
     """Arma (una sola vez por combinación) el sprite chico de un gato. Devuelve una Surface."""
     chica = pygame.Surface((16, ALTO_SOMBRERO + 17), pygame.SRCALPHA)
-    dy = ALTO_SOMBRERO - (1 if frame in (1, 3) else 0)       # al caminar el cuerpo "rebota"
+    dy = ALTO_SOMBRERO - (1 if frame in (1, 3) else 0)
     zapato = _ZAPATOS[calzado] or color
     paleta = {"O": oscurecer(color, 0.38), "F": color, "L": aclarar(color, 0.55), "E": ojos,
               "P": C["rosa_oreja"], "N": C["acento"], "S": zapato}
@@ -239,7 +237,6 @@ def _construir_gato(color, ojos, gorro, delantal, calzado, lentes, chaleco, fram
             "V": (112, 156, 124)}
 
     def poner(grilla, fila0, colores):
-        """Copia una grilla de texto sobre el sprite, desde la fila fila0, usando esa paleta."""
         for y, fila in enumerate(grilla):
             for x, letra in enumerate(fila):
                 if letra in colores and 0 <= fila0 + y < chica.get_height():
@@ -257,7 +254,7 @@ def _construir_gato(color, ojos, gorro, delantal, calzado, lentes, chaleco, fram
         poner(_DELANTAL, dy + 10, ropa)
     if lentes:
         for x, y in _ANTEOJOS:
-            chica.set_at((x, dy + y), (214, 170, 90))      # marco dorado
+            chica.set_at((x, dy + y), (214, 170, 90))
     if gorro == 1:
         poner(_COFIA, dy - 1, ropa)
     elif gorro == 2:
@@ -266,7 +263,6 @@ def _construir_gato(color, ojos, gorro, delantal, calzado, lentes, chaleco, fram
 
 
 def frame_caminata(t_anim, camina):
-    """Devuelve qué cuadro de animación (0 a 3) corresponde: 0 si está quieto."""
     if not camina:
         return 0
     return (1, 0, 3, 2)[int(t_anim * 9) % 4]
@@ -274,13 +270,6 @@ def frame_caminata(t_anim, camina):
 
 def dibujar_gato(pantalla, centro, color, ropa=None, escala=1.0, lentes=False, ojos=None,
                  frame=0, mirando=1, chaleco=False):
-    """Dibuja un gatito pixel art con sombra.
-
-    ropa: diccionario {"delantal": bool, "gorro": 0-2, "calzado": 0-2} (opcional).
-    lentes / chaleco: los anteojitos y el chaleco tejido de Don Salmón.
-    ojos: color de ojos (por defecto oscuros; el protagonista los tiene verdes).
-    frame: cuadro de animación (0 quieto; 1 a 3 caminando). mirando: 1 derecha, -1 izquierda.
-    """
     ropa = ropa or {}
     px = max(1, round(escala * PX_GATO))
     sprite = _construir_gato(tuple(color), tuple(ojos or COLOR_OJOS_CLIENTE), ropa.get("gorro", 0),
@@ -297,14 +286,9 @@ def dibujar_gato(pantalla, centro, color, ropa=None, escala=1.0, lentes=False, o
 
 
 def dibujar_bandeja(pantalla, centro, items, capacidad, color, mirando=1, frame=0):
-    """Dibuja la bandeja que el gato lleva en la mano (como un mozo), con los ítems arriba.
-
-    El ancho de la bandeja crece con la capacidad (la mejoran los gorros de la tienda).
-    """
     cx, cy = centro
     px, d = PX_GATO, mirando
     borde = oscurecer(color, 0.38)
-    # El brazo se dobla hacia la bandeja para sugerir así un agarre natural y estable.
     y_pies = cy + 7 * px - (px if frame in (1, 3) else 0)
     ancho = capacidad * 26 + 18
     centro_x = cx + d * (30 + ancho // 2)
@@ -328,7 +312,6 @@ def dibujar_bandeja(pantalla, centro, items, capacidad, color, mirando=1, frame=
     pygame.draw.rect(pantalla, C["metal_oscuro"], (plato.x, plato.bottom - 2, ancho, 2))
     pygame.draw.line(pantalla, C["leche"], (plato.left + 3, plato.top + 2), (plato.right - 4, plato.top + 2), 2)
 
-    # Soportes laterales para que la bandeja parezca un objeto real, no una barra.
     soportes = ((plato.left + 4, plato.top - 6, 6, 6), (plato.right - 10, plato.top - 6, 6, 6))
     for lado, arriba, ancho_soporte, alto_soporte in soportes:
         pygame.draw.rect(pantalla, C["contorno"], (lado, arriba, ancho_soporte, alto_soporte))

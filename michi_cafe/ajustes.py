@@ -10,7 +10,7 @@ import pygame
 # ---------------------------------------------------------------- rutas
 RUTA_BASE = os.path.dirname(os.path.abspath(__file__))
 RUTA_SONIDOS = os.path.join(RUTA_BASE, "sonidos")
-RUTA_IMAGENES = os.path.join(RUTA_BASE, "imagenes")      # ilustraciones opcionales (ver imagenes/LEEME.txt)
+RUTA_IMAGENES = os.path.join(RUTA_BASE, "imagenes")
 RUTA_FUENTE = os.path.join(RUTA_BASE, "fuentes", "Jersey15.ttf")
 
 # ---------------------------------------------------------------- ventana
@@ -42,7 +42,7 @@ COLORES_PASTEL = {
     "sombra": (210, 185, 160),
     "billete": (150, 205, 150),
     "resaltado": (255, 255, 255),
-    "contorno": (62, 42, 50),          # borde oscuro de los sprites pixel art
+    "contorno": (62, 42, 50),
     "madera_oscura": (150, 104, 76),
     "metal": (206, 210, 220),
     "metal_oscuro": (150, 156, 170),
@@ -61,17 +61,15 @@ PELAJES = [
     ("Negro", (78, 72, 84)),
 ]
 COLOR_DON_SALMON = (236, 150, 118)
-# Los clientes NO usan el color crema: se perdía contra el piso.
 COLORES_CLIENTES = [(240, 170, 100), (172, 178, 190), (200, 160, 130),
                     (255, 205, 205), (190, 170, 220), (150, 110, 90)]
-COLOR_OJOS_JUGADOR = (70, 205, 110)     # el protagonista tiene ojos verdes (contrasta con el gato negro)
+COLOR_OJOS_JUGADOR = (70, 205, 110)
 COLOR_OJOS_CLIENTE = (50, 35, 45)
 
 # ---------------------------------------------------------------- pixel art
-# Cada "pixel" del arte se dibuja como un cuadrado de PX x PX píxeles de pantalla.
-PX_GATO = 3                   # tamaño del pixel de los gatos
-PX_ITEM = 2                   # tamaño del pixel de los ítems (café, medialunas)
-PX_MUNDO = 4                  # tamaño del pixel de muebles, fondos y escenas
+PX_GATO = 3
+PX_ITEM = 2
+PX_MUNDO = 4
 
 # ---------------------------------------------------------------- estados del juego
 HISTORIA_INTRO = "HISTORIA_INTRO"
@@ -94,30 +92,32 @@ TAZA_LECHE = 1
 TAZA_CALIENTE = 2
 
 # ---------------------------------------------------------------- jugador
-TAM_JUGADOR = 34              # lado del rect de colisión
-VELOCIDAD_BASE = 230          # píxeles por segundo
-CAPACIDAD_BASE = 1            # ítems en la bandeja
+TAM_JUGADOR = 34
+VELOCIDAD_BASE = 230
+CAPACIDAD_BASE = 1
 POS_INICIAL = (480, 205)
-ALCANCE_INTERACCION = 34      # distancia extra para poder interactuar
+ALCANCE_INTERACCION = 34
 ZONA_JUEGO = pygame.Rect(20, 175, 920, 445)
 
 # ---------------------------------------------------------------- estaciones y mesas
+# Ancho de 96px por mueble con un salto perfecto de 112px entre cada uno
 ESTACIONES_RECT = {
     "leche": (30, 80, 104, 72),
-    "vapor": (170, 80, 104, 72),
-    "espresso": (310, 80, 104, 72),
-    "medialunas": (450, 80, 104, 72),
-    "frutilla": (590, 80, 104, 72),
-    "dulce": (730, 80, 104, 72),
-    "syrup": (830, 80, 104, 72),
+    "vapor": (160, 80, 104, 72),
+    "espresso": (290, 80, 104, 72),
+    "medialunas": (420, 80, 104, 72),
+    "frutilla": (550, 80, 104, 72),
+    "dulce": (680, 80, 104, 72),
+    "syrup": (810, 80, 104, 72),
     "basura": (830, 500, 104, 72),
 }
-# día desde el cual se puede usar cada estación de topping
+
+# día desde el cual se puede usar cada estación
 DIA_ESTACION = {"frutilla": 2, "dulce": 3, "syrup": 3, "basura": 1}
 CENTROS_MESAS = [(300, 320), (500, 320), (700, 320),
                  (300, 500), (500, 500), (700, 500)]
 TAM_MESA = 80
-DESPLAZAMIENTO_ASIENTO = 65   # el cliente se sienta a la izquierda de la mesa
+DESPLAZAMIENTO_ASIENTO = 65
 
 # ---------------------------------------------------------------- clientes
 PUERTA = (-40, 580)
@@ -125,8 +125,8 @@ POS_COLA_X = 70
 POS_COLA_Y = 250
 SEPARACION_COLA = 60
 VELOCIDAD_CLIENTE = 130
-TIEMPO_SENTADO = 1.0          # segundos mirando el menú antes de pedir
-MAX_COLA = 4                  # si 4 vecinos quedan sin mesa, el local se desborda (derrota)
+TIEMPO_SENTADO = 1.0
+MAX_COLA = 4
 
 # ---------------------------------------------------------------- menú y niveles
 PRECIOS = {"cafe": 12, "cafe_syrup": 14, "medialuna": 8, "medialuna_frutilla": 11,
@@ -134,16 +134,14 @@ PRECIOS = {"cafe": 12, "cafe_syrup": 14, "medialuna": 8, "medialuna_frutilla": 1
 NOMBRES_ITEMS = {"cafe": "Café con leche", "cafe_syrup": "Café con vainilla",
                  "medialuna": "Medialuna", "medialuna_frutilla": "Medialuna con frutilla",
                  "medialuna_dulce": "Medialuna con dulce de leche"}
-# día desde el cual los clientes pueden pedir cada ítem
 DIA_ITEM = {"cafe": 1, "cafe_syrup": 3, "medialuna": 1, "medialuna_frutilla": 2,
             "medialuna_dulce": 3}
-# avisos al empezar los días en que se desbloquea algo nuevo
+
 AVISOS_DESBLOQUEO = {
     2: "¡Novedad! Medialunas con frutilla.\nSacá una medialuna y pasala por la estación de Frutilla.",
     3: "¡Novedad! Café con vainilla y medialunas con dulce de leche.\nUsá el jarabe y el frasco de dulce de leche.",
 }
 
-# meta de recaudación por día, ritmo de llegada de clientes y máximo de ítems por pedido
 NIVELES = {
     1: {"meta": 50,  "intervalo": 9.0, "max_items": 1},
     2: {"meta": 120, "intervalo": 8.0, "max_items": 1},
@@ -154,7 +152,6 @@ NIVELES = {
 DIAS_TOTALES = len(NIVELES)
 
 # ---------------------------------------------------------------- tienda de ropa
-# slot: parte del cuerpo; nivel: qué tan avanzada es la prenda; atributo: qué mejora
 TIENDA = {
     "delantal":     {"nombre": "Delantal gastronómico", "precio": 30, "slot": "delantal", "nivel": 1,
                      "atributo": "multiplicador_propina", "valor": 1.20, "requiere": None,
@@ -173,8 +170,6 @@ TIENDA = {
                      "detalle": "Bandeja para 3 ítems"},
 }
 
-# Colores verdes/celestes usados en la ropa; el rosa se reemplaza por tonos de cocina frescos.
-
 # ---------------------------------------------------------------- sonido
 ARCHIVOS_SONIDO = {
     "miau": "miau.wav",
@@ -187,11 +182,11 @@ VOLUMEN_EFECTOS = 0.9
 VOLUMEN_MUSICA = 0.35
 
 # ---------------------------------------------------------------- textos
-DURACION_AVISO = 2.5          # segundos que se ve un mensaje en pantalla
-DURACION_AVISO_DIA = 5.0      # el aviso de inicio de día dura más (por si hay novedades)
-BOTON_PAUSA = (156, 14, 36, 36)   # rect del botón de pausa (en el HUD)
+DURACION_AVISO = 2.5
+DURACION_AVISO_DIA = 5.0
+BOTON_PAUSA = (156, 14, 36, 36)
 
-ESCENAS_VINETAS = ["escena_calle", "escena_salmon", "escena_delantal"]   # una ilustración por viñeta
+ESCENAS_VINETAS = ["escena_calle", "escena_salmon", "escena_delantal"]
 
 VINETAS = [
     ("El drama profesional",
