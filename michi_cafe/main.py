@@ -228,7 +228,10 @@ class Juego:
         if self.estado == JUGANDO and tecla in (pygame.K_p, pygame.K_ESCAPE):
             self.cambiar_pausa()
         elif self.estado == JUGANDO and self.pausado:
-            pass                                     # en pausa no se hace nada más
+            if tecla == pygame.K_r:
+                self.nueva_partida()
+                self.vineta = -1
+                self.estado = HISTORIA_INTRO
         elif self.estado == HISTORIA_INTRO and confirmar:
             self.vineta += 1
             if self.vineta >= len(VINETAS):
@@ -334,14 +337,15 @@ class Juego:
     def dibujar_pausa(self):
         """Dibuja el menú de pausa sobre el salón."""
         self.pantalla.blit(self.velo_pausa, (0, 0))
-        dibujar_panel(self.pantalla, (200, 170, 560, 300))
+        dibujar_panel(self.pantalla, (200, 170, 560, 320))
         texto_centrado(self.pantalla, "PAUSA", self.fuente_xl, C["acento"], (ANCHO // 2, 225))
         texto_centrado(self.pantalla, "P, Esc o clic para continuar", self.fuente_m, C["texto"], (ANCHO // 2, 305))
-        texto_centrado(self.pantalla, "Los vecinos esperan con paciencia.", self.fuente_s, C["texto"], (ANCHO // 2, 350))
+        texto_centrado(self.pantalla, "R - Reiniciar partida", self.fuente_m, C["acento"], (ANCHO // 2, 345))
+        texto_centrado(self.pantalla, "Los vecinos esperan con paciencia.", self.fuente_s, C["texto"], (ANCHO // 2, 385))
         texto_centrado(self.pantalla, "WASD / flechas: moverte  -  E / Espacio: interactuar",
-                       self.fuente_s, C["texto"], (ANCHO // 2, 390))
+                       self.fuente_s, C["texto"], (ANCHO // 2, 420))
         estado_audio = "Sonido: activado" if self.sonidos else "Sonido: no disponible (mirá la consola)"
-        texto_centrado(self.pantalla, estado_audio, self.fuente_s, C["acento"], (ANCHO // 2, 430))
+        texto_centrado(self.pantalla, estado_audio, self.fuente_s, C["acento"], (ANCHO // 2, 455))
 
     def dibujar_juego(self):
         """Dibuja el salón: fondo, estaciones, mesas, clientes, jugador y HUD."""

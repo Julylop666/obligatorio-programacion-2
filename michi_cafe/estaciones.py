@@ -67,7 +67,7 @@ _ICONO_FRASCO = (
     "OWWWWWWWO",
     "OOOOOOOOO",
 )
-_PAL_CHISPAS = {"O": C["contorno"], "L": C["chocolate"], "W": (255, 240, 225), "C": C["chocolate"]}
+_PAL_FRUTILLA = {"O": C["contorno"], "L": (192, 72, 110), "W": (255, 235, 240), "C": (230, 100, 145)}
 _PAL_DULCE = {"O": C["contorno"], "L": (248, 160, 180), "W": (176, 98, 40), "C": (214, 140, 66)}
 _PAL_SYRUP = {"O": C["contorno"], "L": (178, 132, 82), "W": (255, 245, 214), "C": (233, 200, 130)}
 
@@ -251,7 +251,7 @@ class EstacionTopping(Estacion):
     """Estación que le agrega un topping a una medialuna simple que lleve el jugador."""
 
     def __init__(self, clave, nombre, item_resultado, paleta, mensaje):
-        """Crea la estación: item_resultado es el ítem que se obtiene (ej. 'medialuna_chispas')."""
+        """Crea la estación: item_resultado es el ítem que se obtiene (ej. 'medialuna_frutilla')."""
         super().__init__(clave, nombre)
         self.item_resultado = item_resultado
         self.paleta = paleta
@@ -269,13 +269,13 @@ class EstacionTopping(Estacion):
         return self.mensaje, "miau", 0
 
 
-class EstacionChispas(EstacionTopping):
-    """Frasco de chispas de chocolate (se desbloquea el día 2)."""
+class EstacionFrutilla(EstacionTopping):
+    """Frasco de cobertura de frutilla (se desbloquea el día 2)."""
 
     def __init__(self):
-        """Crea la estación de chispas."""
-        super().__init__("chispas", "Chispas", "medialuna_chispas", _PAL_CHISPAS,
-                         "¡Medialuna con chispas de chocolate!")
+        """Crea la estación de cobertura de frutilla."""
+        super().__init__("frutilla", "Cobertura de frutilla", "medialuna_frutilla", _PAL_FRUTILLA,
+                         "¡Medialuna con frutilla!")
 
 
 class EstacionDulce(EstacionTopping):
@@ -413,7 +413,7 @@ def crear_estaciones(dia=1):
     Las que todavía no se desbloquearon en 'dia' quedan con activa = False.
     """
     estaciones = [EstacionLeche(), EstacionVapor(), EstacionEspresso(), ExhibidorMedialunas(),
-                  EstacionChispas(), EstacionDulce(), EstacionSyrup(), EstacionBasura()]
+                  EstacionFrutilla(), EstacionDulce(), EstacionSyrup(), EstacionBasura()]
     for estacion in estaciones:
         estacion.activa = dia >= estacion.dia_desbloqueo
     return estaciones
