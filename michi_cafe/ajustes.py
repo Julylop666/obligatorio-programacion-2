@@ -109,9 +109,11 @@ ESTACIONES_RECT = {
     "medialunas": (450, 80, 104, 72),
     "chispas": (590, 80, 104, 72),
     "dulce": (730, 80, 104, 72),
+    "syrup": (830, 80, 104, 72),
+    "basura": (730, 160, 104, 72),
 }
 # día desde el cual se puede usar cada estación de topping
-DIA_ESTACION = {"chispas": 2, "dulce": 3}
+DIA_ESTACION = {"chispas": 2, "dulce": 3, "syrup": 3, "basura": 1}
 CENTROS_MESAS = [(300, 320), (500, 320), (700, 320),
                  (300, 500), (500, 500), (700, 500)]
 TAM_MESA = 80
@@ -127,15 +129,18 @@ TIEMPO_SENTADO = 1.0          # segundos mirando el menú antes de pedir
 MAX_COLA = 4                  # si 4 vecinos quedan sin mesa, el local se desborda (derrota)
 
 # ---------------------------------------------------------------- menú y niveles
-PRECIOS = {"cafe": 12, "medialuna": 8, "medialuna_chispas": 10, "medialuna_dulce": 11}
-NOMBRES_ITEMS = {"cafe": "Café con leche", "medialuna": "Medialuna",
-                 "medialuna_chispas": "Medialuna con chispas", "medialuna_dulce": "Medialuna con dulce de leche"}
+PRECIOS = {"cafe": 12, "cafe_syrup": 14, "medialuna": 8, "medialuna_chispas": 10,
+           "medialuna_dulce": 11}
+NOMBRES_ITEMS = {"cafe": "Café con leche", "cafe_syrup": "Café con vainilla",
+                 "medialuna": "Medialuna", "medialuna_chispas": "Medialuna con chispas",
+                 "medialuna_dulce": "Medialuna con dulce de leche"}
 # día desde el cual los clientes pueden pedir cada ítem
-DIA_ITEM = {"cafe": 1, "medialuna": 1, "medialuna_chispas": 2, "medialuna_dulce": 3}
+DIA_ITEM = {"cafe": 1, "cafe_syrup": 3, "medialuna": 1, "medialuna_chispas": 2,
+            "medialuna_dulce": 3}
 # avisos al empezar los días en que se desbloquea algo nuevo
 AVISOS_DESBLOQUEO = {
     2: "¡Novedad! Medialunas con chispas de chocolate.\nSacá una medialuna y pasala por la estación de Chispas.",
-    3: "¡Novedad! Medialunas con dulce de leche.\nSacá una medialuna y pasala por la estación de Dulce de leche.",
+    3: "¡Novedad! Café con vainilla y medialunas con dulce de leche.\nUsá el jarabe y el frasco de dulce de leche.",
 }
 
 # meta de recaudación por día, ritmo de llegada de clientes y máximo de ítems por pedido
@@ -167,6 +172,8 @@ TIENDA = {
                      "atributo": "capacidad_bandeja", "valor": 3, "requiere": "gorro_1",
                      "detalle": "Bandeja para 3 ítems"},
 }
+
+# Colores verdes/celestes usados en la ropa; el rosa se reemplaza por tonos de cocina frescos.
 
 # ---------------------------------------------------------------- sonido
 ARCHIVOS_SONIDO = {

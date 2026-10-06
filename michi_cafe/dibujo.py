@@ -89,7 +89,8 @@ def texto_centrado(pantalla, texto, fuente, color, centro):
 
 # ---------------------------------------------------------------- ítems (pixel art)
 _PAL_ITEM = {"O": C["contorno"], "W": (255, 252, 246), "M": (244, 228, 205), "C": C["cafe"],
-             "Y": (236, 174, 86), "D": (203, 132, 58), "K": C["chocolate"], "Q": C["caramelo"]}
+             "Y": (236, 174, 86), "D": (203, 132, 58), "K": C["chocolate"], "Q": C["caramelo"],
+             "V": (198, 153, 108), "S": (155, 112, 55)}
 
 _CAFE = (
     ".OOOOOOO..",
@@ -100,12 +101,32 @@ _CAFE = (
     ".OWWWWOO..",
     "..OOOOOO..",
 )
+
+_CAFE_SYRUP = (
+    ".OOOOOOO..",
+    "OMMCCMMO..",
+    "OWWWWWWOOO",
+    "OWWWWWWO.O",
+    "OWWWWWWSOO",
+    ".OWWWWOO..",
+    "..OOOOOO..",
+)
 _MEDIALUNA = (
     "....OOOO....",
     "..OOYYYYOO..",
     ".OYYDYYDYYO.",
     "OYYO.OO.OYYO",
     "OYO......OYO",
+    ".O........O.",
+)
+
+# La medialuna con chispas tiene un brillo de chocolate oscuro y un fondo dorado más marcado.
+_MEDIALUNA_CHISPAS = (
+    "....OOOO....",
+    "..OOYYYYOO..",
+    ".OYYDYYDYYO.",
+    "OYYOKKOKYYO",
+    "OYO..K..OYO",
     ".O........O.",
 )
 
@@ -120,9 +141,9 @@ def _con_puntos(grilla, puntos, letra):
 
 ITEMS_PIXEL = {
     "cafe": _CAFE,
+    "cafe_syrup": _CAFE_SYRUP,
     "medialuna": _MEDIALUNA,
-    # chispas de chocolate: puntitos oscuros sobre la medialuna
-    "medialuna_chispas": _con_puntos(_MEDIALUNA, [(5, 1), (3, 2), (6, 2), (9, 2), (2, 3), (10, 3)], "K"),
+    "medialuna_chispas": _MEDIALUNA_CHISPAS,
     # dulce de leche: baño de caramelo con un par de gotas
     "medialuna_dulce": _con_puntos(_MEDIALUNA, [(4, 1), (5, 1), (6, 1), (7, 1), (3, 2), (5, 2), (6, 2),
                                                 (8, 2), (2, 3), (9, 3)], "Q"),
@@ -206,7 +227,7 @@ def _construir_gato(color, ojos, gorro, delantal, calzado, lentes, chaleco, fram
     zapato = _ZAPATOS[calzado] or color
     paleta = {"O": oscurecer(color, 0.38), "F": color, "L": aclarar(color, 0.55), "E": ojos,
               "P": C["rosa_oreja"], "N": C["acento"], "S": zapato}
-    ropa = {"O": C["contorno"], "W": (255, 255, 255), "P": (248, 160, 180), "A": (248, 160, 180),
+    ropa = {"O": C["contorno"], "W": (255, 255, 255), "P": (130, 180, 155), "A": (130, 187, 214),
             "V": (112, 156, 124)}
 
     def poner(grilla, fila0, colores):
@@ -278,23 +299,27 @@ def dibujar_bandeja(pantalla, centro, items, capacidad, color, mirando=1, frame=
     y_pies = cy + 7 * px - (px if frame in (1, 3) else 0)      # acompaña el rebote al caminar
     ancho = capacidad * 26 + 10
     centro_x = cx + d * (30 + ancho // 2)
-    y_plato = y_pies - 38                                       # altura de los hombros
+    y_plato = y_pies - 40                                       # altura del brazo y la bandeja
     hombro = (cx + d * 13, y_pies - 16)
-    mano = (centro_x, y_plato + 14)
-    pygame.draw.line(pantalla, borde, hombro, mano, 11)         # brazo levantado
-    pygame.draw.line(pantalla, color, hombro, mano, 5)
-    palma = pygame.Rect(0, 0, 16, 12)
+    codo = (cx + d * 20, y_pies - 24)
+    mano = (centro_x - d * 5, y_plato + 12)
+    pygame.draw.line(pantalla, borde, hombro, codo, 11)
+    pygame.draw.line(pantalla, color, hombro, codo, 5)
+    pygame.draw.line(pantalla, borde, codo, mano, 9)
+    pygame.draw.line(pantalla, color, codo, mano, 4)
+    palma = pygame.Rect(0, 0, 18, 12)
     palma.center = mano
-    pygame.draw.rect(pantalla, borde, palma.inflate(4, 4))
+    pygame.draw.rect(pantalla, borde, palma.inflate(5, 5))
     pygame.draw.rect(pantalla, color, palma)
-    plato = pygame.Rect(0, 0, ancho, 8)                         # la bandeja
+    plato = pygame.Rect(0, 0, ancho, 9)
     plato.midtop = (centro_x, y_plato)
-    pygame.draw.rect(pantalla, C["contorno"], plato.inflate(6, 6))
+    pygame.draw.rect(pantalla, C["contorno"], plato.inflate(6, 7))
     pygame.draw.rect(pantalla, C["metal"], plato)
-    pygame.draw.rect(pantalla, C["metal_oscuro"], (plato.left, plato.bottom - 3, ancho, 3))
-    pygame.draw.line(pantalla, C["leche"], plato.topleft, (plato.right - 1, plato.top), 2)
-    for lado in (plato.left, plato.right - 4):                  # bordecitos de la bandeja
+    pygame.draw.rect(pantalla, C["metal_oscuro"], (plato.x, plato.bottom - 2, ancho, 2))
+    pygame.draw.line(pantalla, C["leche"], (plato.left + 2, plato.top + 1), (plato.right - 3, plato.top + 1), 2)
+    pygame.draw.line(pantalla, C["metal_oscuro"], (plato.left, plato.bottom), (plato.right, plato.bottom), 1)
+    for lado in (plato.left, plato.right - 4):
         pygame.draw.rect(pantalla, C["contorno"], (lado - 1, plato.top - 5, 6, 6))
         pygame.draw.rect(pantalla, C["metal"], (lado, plato.top - 4, 4, 4))
-    for i, item in enumerate(items):                            # lo que lleva encima
+    for i, item in enumerate(items):
         dibujar_item(pantalla, item, (plato.left + 13 + i * 26, plato.top - 1), base=True, px=PX_ITEM)

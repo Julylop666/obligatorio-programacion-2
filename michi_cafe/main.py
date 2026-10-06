@@ -258,7 +258,8 @@ class Juego:
                 self.iniciar_dia()
         elif self.estado in (DERROTA, VICTORIA_FINAL) and tecla == pygame.K_r:
             self.nueva_partida()
-            self.estado = SELECCION_GATO            # volver a jugar sin cerrar la ventana
+            self.vineta = -1
+            self.estado = HISTORIA_INTRO            # vuelve a mostrar la presentación antes de jugar
         return True
 
     # ------------------------------------------------------------ lógica

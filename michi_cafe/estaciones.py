@@ -69,11 +69,22 @@ _ICONO_FRASCO = (
 )
 _PAL_CHISPAS = {"O": C["contorno"], "L": C["chocolate"], "W": (255, 240, 225), "C": C["chocolate"]}
 _PAL_DULCE = {"O": C["contorno"], "L": (248, 160, 180), "W": (176, 98, 40), "C": (214, 140, 66)}
+_PAL_SYRUP = {"O": C["contorno"], "L": (178, 132, 82), "W": (255, 245, 214), "C": (233, 200, 130)}
 
 _PLATO = (
     "..OOOOOOOOOOOOOO..",
     ".OWWWWWWWWWWWWWWO.",
     "..OOOOOOOOOOOOOO..",
+)
+
+_ICONO_BASURA = (
+    "..OOOOO..",
+    ".OWWWWW.O",
+    ".OWWWWWO.",
+    ".OWWWWWO.",
+    ".OWWWWWO.",
+    ".O....OO.",
+    "..OOOOO..",
 )
 
 _CANDADO = (
@@ -112,6 +123,7 @@ class Estacion:
 
     def __init__(self, clave, nombre):
         """Crea la estación en la posición definida en ajustes.ESTACIONES_RECT."""
+        self.clave = clave
         self.nombre = nombre
         self.rect = pygame.Rect(ESTACIONES_RECT[clave])
         self.dia_desbloqueo = DIA_ESTACION.get(clave, 1)
@@ -275,6 +287,45 @@ class EstacionDulce(EstacionTopping):
                          "¡Medialuna con dulce de leche!")
 
 
+class EstacionSyrup(Estacion):
+    """Jarabe de vainilla que se agrega a un café."""
+
+    def __init__(self):
+        """Crea la estación de vainilla."""
+        super().__init__("syrup", "Syrup de vainilla")
+
+    def dibujar_icono(self, pantalla):
+        """Dibuja un frasco de jarabe junto a una cuchara."""
+        self.dibujar_grilla(pantalla, _ICONO_FRASCO, _PAL_SYRUP)
+
+    def interactuar(self, jugador):
+        """Convierte un café simple en uno con vainilla si hay uno en la bandeja."""
+        if "cafe" not in jugador.bandeja:
+            return "Primero llevá un café simple en la bandeja.", None, 0
+        jugador.bandeja[jugador.bandeja.index("cafe")] = "cafe_syrup"
+        return "¡Café con vainilla!", "miau", 0
+
+
+class EstacionBasura(Estacion):
+    """Tacho que descarta un ítem de la bandeja."""
+
+    def __init__(self):
+        """Crea el tacho de basura."""
+        super().__init__("basura", "Tacho")
+
+    def dibujar_icono(self, pantalla):
+        """Dibuja un tacho con una tapa y una manija."""
+        sprite = pixelar(_ICONO_BASURA, {"O": C["contorno"], "W": C["metal"], "P": C["metal_oscuro"]}, PX_GATO)
+        pantalla.blit(sprite, sprite.get_rect(midbottom=self.punto_apoyo()))
+
+    def interactuar(self, jugador):
+        """Descarta un único ítem de la bandeja."""
+        if not jugador.bandeja:
+            return "La bandeja ya está vacía.", None, 0
+        jugador.bandeja.pop()
+        return "Ítem descartado.", "miau", 0
+
+
 # ---------------------------------------------------------------- mesas
 _BILLETE = (
     "OOOOOOOO",
@@ -357,12 +408,12 @@ class Mesa:
 
 
 def crear_estaciones(dia=1):
-    """Devuelve la lista con las 6 estaciones de la barra.
+    """Devuelve la lista con las 8 estaciones de la barra.
 
     Las que todavía no se desbloquearon en 'dia' quedan con activa = False.
     """
     estaciones = [EstacionLeche(), EstacionVapor(), EstacionEspresso(), ExhibidorMedialunas(),
-                  EstacionChispas(), EstacionDulce()]
+                  EstacionChispas(), EstacionDulce(), EstacionSyrup(), EstacionBasura()]
     for estacion in estaciones:
         estacion.activa = dia >= estacion.dia_desbloqueo
     return estaciones
