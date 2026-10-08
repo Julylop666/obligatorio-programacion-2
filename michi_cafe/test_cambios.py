@@ -1,10 +1,12 @@
 import os
 import unittest
+from collections import defaultdict
 
+import pygame
 from ajustes import (DIA_ITEM, TIENDA, ESTACIONES_RECT, ARCHIVOS_SONIDO, RUTA_SONIDOS, ARCHIVO_MUSICA,
                      VOLUMEN_RELATIVO)
 from estaciones import (EstacionBasura, EstacionSyrup, EstacionLeche, EstacionEspresso, ExhibidorMedialunas,
-                        EstacionFrutilla, crear_estaciones)
+                        EstacionFrutilla, crear_estaciones, crear_mesas)
 from jugador import Jugador
 from ventana import VentanaDia, momento_del_dia
 from main import Juego, prenda_desbloqueada
@@ -85,6 +87,22 @@ class CambiosJuegoTest(unittest.TestCase):
     def test_basura_esta_a_la_derecha_y_frente_al_salon(self):
         """El tacho está en la posición definida en ajustes."""
         self.assertEqual(ESTACIONES_RECT["basura"], (830, 500, 104, 72))
+
+    def test_tacho_es_un_obstaculo_para_el_jugador(self):
+        """El jugador choca con el tacho igual que con las mesas."""
+        juego = Juego.__new__(Juego)
+        juego.estaciones = crear_estaciones(1)
+        juego.mesas = crear_mesas()
+        jugador = Jugador((240, 170, 100))
+        jugador.pos.update(800, 536)
+        jugador.rect.center = jugador.pos
+        teclas = defaultdict(bool)
+        teclas[pygame.K_d] = True
+
+        jugador.mover(0.2, teclas, juego.obstaculos_movimiento())
+
+        tacho = pygame.Rect(ESTACIONES_RECT["basura"])
+        self.assertLessEqual(jugador.rect.right, tacho.left)
 
     def test_frutilla_reemplaza_la_cobertura_de_chispas(self):
         """La medialuna con frutilla existe y se desbloquea el día 2."""

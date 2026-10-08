@@ -153,6 +153,11 @@ class Juego:
         """Devuelve las estaciones ya desbloqueadas y las mesas (lo que se puede usar)."""
         return [e for e in self.estaciones if e.activa] + self.mesas
 
+    def obstaculos_movimiento(self):
+        """Devuelve las mesas y el tacho, que bloquean el paso del jugador."""
+        return ([mesa.rect for mesa in self.mesas]
+                + [estacion.rect for estacion in self.estaciones if estacion.clave == "basura"])
+
     def nueva_partida(self):
         """Reinicia dinero, día y jugador (se usa al empezar y al volver a jugar)."""
         self.dia = 1
@@ -282,7 +287,7 @@ class Juego:
         self.ventana.actualizar(dt, self.dinero_dia / NIVELES[self.dia]["meta"])
         if self.estado != JUGANDO:
             return
-        self.jugador.mover(dt, pygame.key.get_pressed(), [m.rect for m in self.mesas])
+        self.jugador.mover(dt, pygame.key.get_pressed(), self.obstaculos_movimiento())
         self.t_llegada -= dt
         if self.t_llegada <= 0:                       # llega un vecino nuevo
             self.clientes.append(crear_cliente(self.dia))
