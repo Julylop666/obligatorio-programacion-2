@@ -23,7 +23,7 @@ _ICONO_LECHE = (
     "OWWWWWWO",
     "OOOOOOOO",
 )
-_PAL_LECHE = {"O": C["contorno"], "W": C["leche"], "B": (120, 170, 225)}
+_PAL_LECHE = {"O": C["contorno"], "W": C["leche"], "B": C["azul_medio"]}
 
 _ICONO_VAPOR = (
     "...W..W...",
@@ -38,7 +38,7 @@ _ICONO_VAPOR = (
     ".OGGGGGO..",
     "..OOOOO...",
 )
-_PAL_VAPOR = {"O": C["contorno"], "G": C["metal"], "H": (240, 242, 248), "W": (255, 255, 255)}
+_PAL_VAPOR = {"O": C["contorno"], "G": C["metal"], "H": C["vapor_claro"], "W": C["blanco"]}
 
 _ICONO_ESPRESSO = (
     "..OOOOOOOOOO..",
@@ -51,7 +51,7 @@ _ICONO_ESPRESSO = (
     ".....OWWO.....",
     ".OOOOOOOOOOOO.",
 )
-_PAL_ESPRESSO = {"O": C["contorno"], "G": (132, 124, 140), "P": (248, 150, 170), "J": (255, 220, 120),
+_PAL_ESPRESSO = {"O": C["contorno"], "G": C["metal_espresso"], "P": C["rosa_boton"], "J": C["luz_amarilla"],
                  "K": C["cafe"], "W": C["leche"]}
 
 _ICONO_FRASCO = (
@@ -67,9 +67,9 @@ _ICONO_FRASCO = (
     "OWWWWWWWO",
     "OOOOOOOOO",
 )
-_PAL_FRUTILLA = {"O": C["contorno"], "L": (192, 72, 110), "W": (255, 235, 240), "C": (230, 100, 145)}
-_PAL_DULCE = {"O": C["contorno"], "L": (248, 160, 180), "W": (176, 98, 40), "C": (214, 140, 66)}
-_PAL_SYRUP = {"O": C["contorno"], "L": (178, 132, 82), "W": (255, 245, 214), "C": (233, 200, 130)}
+_PAL_FRUTILLA = {"O": C["contorno"], "L": C["frutilla_tapa"], "W": C["frutilla_crema"], "C": C["frutilla_pintitas"]}
+_PAL_DULCE = {"O": C["contorno"], "L": C["rosa_claro"], "W": C["dulce_base"], "C": C["dulce_pintitas"]}
+_PAL_SYRUP = {"O": C["contorno"], "L": C["vainilla_tapa"], "W": C["vainilla_crema"], "C": C["vainilla_pintitas"]}
 
 _PLATO = (
     "..OOOOOOOOOOOOOO..",
@@ -105,12 +105,12 @@ def _base_estacion(ancho, alto, bloqueada=False):
     chica = pygame.Surface((ancho // px, alto // px), pygame.SRCALPHA)
     madera, tapa = C["barra"], C["barra_tapa"]
     if bloqueada:
-        madera, tapa = (170, 160, 160), (200, 192, 192)
+        madera, tapa = C["bloqueada_madera"], C["bloqueada_tapa"]
     w, h = chica.get_size()
     oscuro = oscurecer(madera, 0.7)
     pygame.draw.rect(chica, C["contorno"], (0, 7, w, 5))                 # contorno de la tapa
     pygame.draw.rect(chica, tapa, (1, 8, w - 2, 3))
-    pygame.draw.line(chica, (255, 255, 255), (2, 8), (w - 3, 8))         # brillo de la tapa
+    pygame.draw.line(chica, C["blanco"], (2, 8), (w - 3, 8))         # brillo de la tapa
     pygame.draw.rect(chica, C["contorno"], (0, 12, w, h - 12))           # contorno del frente
     pygame.draw.rect(chica, madera, (1, 12, w - 2, h - 13))
     for x in range(7, w - 2, 8):                                          # tablitas del frente
@@ -345,7 +345,7 @@ def _sprite_mesa():
     pygame.draw.ellipse(chica, C["contorno"], (0, 0, w, h))
     pygame.draw.ellipse(chica, C["mantel"], (1, 1, w - 2, h - 2))
     pygame.draw.ellipse(chica, C["mesa"], (4, 3, w - 8, h - 6))
-    pygame.draw.ellipse(chica, (255, 255, 255), (6, 4, 5, 2))            # brillo
+    pygame.draw.ellipse(chica, C["blanco"], (6, 4, 5, 2))            # brillo
     return pygame.transform.scale(chica, (w * px, h * px))
 
 

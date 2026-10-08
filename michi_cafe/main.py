@@ -75,14 +75,14 @@ def crear_fondo():
             if (fila // 10 + col // 10) % 2:
                 pygame.draw.rect(chica, C["piso_b"], (col, fila, 10, 10))
     for _ in range(320):                          # puntitos de textura en el piso
-        chica.set_at((azar.randrange(0, ANCHO // px), azar.randrange(44, ALTO // px)), (232, 206, 176))
+        chica.set_at((azar.randrange(0, ANCHO // px), azar.randrange(44, ALTO // px)), C["piso_punto"])
     pygame.draw.rect(chica, C["pared"], (0, 0, ANCHO // px, 41))
     for x in range(0, ANCHO // px, 8):            # papel tapiz a rayas
-        pygame.draw.rect(chica, (250, 212, 202), (x, 0, 2, 38))
+        pygame.draw.rect(chica, C["papel_rayas"], (x, 0, 2, 38))
     pygame.draw.rect(chica, C["zocalo"], (0, 38, ANCHO // px, 3))
     pygame.draw.rect(chica, C["contorno"], (0, 41, ANCHO // px, 1))
     pygame.draw.rect(chica, C["contorno"], (211, 20, 18, 16))                # ventana
-    pygame.draw.rect(chica, (196, 222, 244), (212, 21, 16, 14))
+    pygame.draw.rect(chica, C["cielo_c"], (212, 21, 16, 14))
     pygame.draw.line(chica, C["leche"], (220, 21), (220, 34))
     pygame.draw.line(chica, C["leche"], (212, 28), (227, 28))
     pygame.draw.rect(chica, C["acento"], (211, 20, 3, 16))                   # cortinas
@@ -126,7 +126,7 @@ class Juego:
         self.fondo = crear_fondo()
         self.escenas = crear_escenas(self.fuente_titulo, self.fuente_l)
         self.velo_pausa = pygame.Surface((ANCHO, ALTO), pygame.SRCALPHA)
-        self.velo_pausa.fill((62, 42, 50, 150))
+        self.velo_pausa.fill(COLOR_VELO_PAUSA)
         self.estado = HISTORIA_INTRO
         self.vineta = -1                       # -1 es la portada; después van las viñetas
         self.indice_gato = 0
@@ -306,27 +306,30 @@ class Juego:
     def dibujar_hud(self):
         """Dibuja día, pausa, meta, monedero, lo que se está preparando y la bandeja."""
         meta = NIVELES[self.dia]["meta"]
-        dibujar_panel(self.pantalla, (10, 8, 940, 56), C["panel"])
+        dibujar_panel(self.pantalla, RECT_HUD, C["panel"])
         self.pantalla.blit(self.fuente_l.render(f"Día {self.dia}/{DIAS_TOTALES}", False, C["texto"]), (26, 17))
         boton = pygame.Rect(BOTON_PAUSA)                                # botón de pausa
         dibujar_panel(self.pantalla, boton, C["azul"] if self.pausado else C["leche"])
         for dx in (11, 21):
             pygame.draw.rect(self.pantalla, C["texto"], (boton.x + dx, boton.y + 9, 5, 18))
-        barra = pygame.Rect(206, 20, 230, 24)
+        barra = pygame.Rect(RECT_BARRA_META)
         pygame.draw.rect(self.pantalla, C["sombra"], barra)
         relleno = barra.copy()
         relleno.width = int(barra.width * min(1, self.dinero_dia / meta))
         pygame.draw.rect(self.pantalla, C["verde"], relleno)
         pygame.draw.rect(self.pantalla, C["zocalo"], barra, 3)
         texto_centrado(self.pantalla, f"${self.dinero_dia} / ${meta}", self.fuente_s, C["texto"], barra.center)
-        self.pantalla.blit(self.fuente_m.render(f"Monedero: ${self.monedero}", False, C["texto"]), (456, 22))
+        self.pantalla.blit(self.fuente_m.render(f"Monedero: ${self.monedero}", False, C["texto"]), POS_MONEDERO)
         # solo se muestra la taza cuando hay un café con leche en preparación
         nombres_taza = {TAZA_LECHE: "leche", TAZA_CALIENTE: "leche espumosa"}
         if self.jugador.taza in nombres_taza:
-            self.pantalla.blit(self.fuente_s.render("Preparando", False, C["acento"]), (655, 14))
-            self.pantalla.blit(self.fuente_s.render(nombres_taza[self.jugador.taza], False, C["texto"]), (655, 34))
+            x_taza, y_taza = POS_PREPARANDO
+            self.pantalla.blit(self.fuente_s.render("Preparando", False, C["acento"]), (x_taza, y_taza))
+            self.pantalla.blit(self.fuente_s.render(nombres_taza[self.jugador.taza], False, C["texto"]),
+                               (x_taza, y_taza + 20))
         for i in range(self.jugador.capacidad_bandeja):    # ranuras de la bandeja
-            casilla = pygame.Rect(810 + i * 42, 16, 38, 38)
+            casilla = pygame.Rect(POS_BANDEJA_HUD[0] + i * SEPARACION_CASILLA_BANDEJA, POS_BANDEJA_HUD[1],
+                                  TAM_CASILLA_BANDEJA, TAM_CASILLA_BANDEJA)
             pygame.draw.rect(self.pantalla, C["sombra"], casilla)
             pygame.draw.rect(self.pantalla, C["zocalo"], casilla, 3)
             if i < len(self.jugador.bandeja):

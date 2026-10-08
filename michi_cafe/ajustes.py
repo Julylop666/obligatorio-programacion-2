@@ -51,6 +51,62 @@ COLORES_PASTEL = {
     "cielo_a": (255, 214, 200),
     "cielo_b": (255, 232, 210),
     "cielo_c": (196, 222, 244),
+    # --- colores del arte (escenarios, íconos, ropa), agrupados por uso
+    "agua": (150, 200, 240),  # agua del platito
+    "anteojos": (214, 170, 90),  # marco de los anteojos
+    "azul_medio": (120, 170, 225),  # azul de la caja de leche y del crayón
+    "blanco": (255, 255, 255),  # blanco puro (brillos, cofia, rayas del toldo)
+    "bloqueada_madera": (170, 160, 160),  # mueble de una estación bloqueada
+    "bloqueada_tapa": (200, 192, 192),  # tapa de una estación bloqueada
+    "cartel_papel": (255, 248, 224),  # papel del cartelito
+    "chaleco_verde": (112, 156, 124),  # chaleco de Don Salmón
+    "cielo_d": (255, 222, 204),  # franja del cielo del atardecer
+    "cielo_e": (255, 240, 220),  # franja clara del cielo
+    "cofia_verde": (130, 180, 155),  # cinta de la cofia
+    "delantal_celeste": (130, 187, 214),  # delantal
+    "dulce_base": (176, 98, 40),  # fondo del frasco de dulce de leche
+    "dulce_pintitas": (214, 140, 66),  # pintitas del frasco de dulce de leche
+    "edificio_lila": (214, 206, 230),  # edificio lila del fondo
+    "edificio_rosa": (238, 200, 200),  # edificio rosa del fondo
+    "espuma": (244, 228, 205),  # espuma del café
+    "farol_poste": (96, 96, 120),  # poste del farol de la calle
+    "frutilla_cobertura": (240, 110, 150),  # cobertura de frutilla
+    "frutilla_crema": (255, 235, 240),  # fondo del frasco de frutilla
+    "frutilla_pintitas": (230, 100, 145),  # pintitas del frasco de frutilla
+    "frutilla_tapa": (192, 72, 110),  # tapa del frasco de frutilla
+    "ladrillo": (255, 222, 196),  # líneas de ladrillo de la fachada
+    "luz_amarilla": (255, 220, 120),  # lucecita de la máquina de espresso
+    "maceta": (178, 110, 80),  # maceta de barro
+    "masa_clara": (236, 174, 86),  # masa de la medialuna
+    "masa_oscura": (203, 132, 58),  # pliegues de la medialuna
+    "masa_sombra": (155, 112, 55),  # sombra de la medialuna
+    "metal_espresso": (132, 124, 140),  # cuerpo de la máquina de espresso
+    "nube": (255, 250, 245),  # nubes
+    "papel_rayas": (250, 212, 202),  # rayas del papel tapiz
+    "pared_fachada": (255, 236, 214),  # pared de la fachada
+    "piso_punto": (232, 206, 176),  # puntitos de textura del piso
+    "planta": (150, 205, 150),  # hojas de las macetas
+    "reflejo_ventana": (222, 238, 250),  # reflejo del vidrio
+    "rosa_boton": (248, 150, 170),  # botón rosa de la máquina de espresso
+    "rosa_claro": (248, 160, 180),  # rosa claro (toldo, tapa del dulce de leche, cortinas)
+    "rosa_crayon": (248, 143, 150),  # crayón rosa del cartelito
+    "sol_centro": (255, 246, 214),  # centro del sol
+    "sol_halo": (255, 232, 196),  # halo del sol de la portada
+    "sol_luz": (255, 236, 190),  # sol de la viñeta 1
+    "sol_ventana": (255, 240, 190),  # sol visto por la ventana / luz de la lámpara
+    "tablas_barra": (172, 126, 92),  # tablas del mostrador
+    "taza_crema": (255, 240, 225),  # tacita crema del estante
+    "vainilla": (245, 210, 110),  # jarabe de vainilla
+    "vainilla_crema": (255, 245, 214),  # fondo del frasco de vainilla
+    "vainilla_pintitas": (233, 200, 130),  # pintitas del frasco de vainilla
+    "vainilla_tapa": (178, 132, 82),  # tapa del frasco de vainilla
+    "vapor_claro": (240, 242, 248),  # brillo de la jarra del vaporizador
+    "ventana_edificio": (255, 246, 232),  # ventanitas de los edificios
+    "vereda": (214, 204, 222),  # vereda
+    "vereda_borde": (190, 180, 204),  # borde de la vereda
+    "vereda_raya": (196, 186, 210),  # rayas de la vereda
+    "zapato_celeste": (120, 190, 235),  # championes antideslizantes
+    "zapato_rosa": (240, 120, 150),  # championes de cocina
 }
 
 # Pelajes entre los que elige el jugador (nombre, color)
@@ -70,6 +126,20 @@ COLOR_OJOS_CLIENTE = (50, 35, 45)
 PX_GATO = 3
 PX_ITEM = 2
 PX_MUNDO = 4
+
+# animación de los gatos y tamaños del arte
+VELOCIDAD_ANIMACION = 9          # cuadros de patitas por segundo al caminar
+ALTO_SOMBRERO = 6                # filas libres arriba de la cabeza para los gorros
+GROSOR_BORDE_PANEL = 4           # grosor del borde de los paneles (un pixel del mundo)
+TAM_ESCENA = (880, 320)          # tamaño en pantalla de las viñetas de la historia
+
+# cielo de la portada: franjas que van de un color inicial sumando un paso por franja
+CIELO_PORTADA_INICIO = (255, 200, 196)
+CIELO_PORTADA_PASO = (0, 4, 2)
+CIELO_PORTADA_FRANJAS = 10
+
+# velo oscuro (con transparencia) que se pone sobre el juego al pausar
+COLOR_VELO_PAUSA = (62, 42, 50, 150)
 
 # ---------------------------------------------------------------- estados del juego
 HISTORIA_INTRO = "HISTORIA_INTRO"
@@ -185,6 +255,15 @@ VOLUMEN_MUSICA = 0.35
 DURACION_AVISO = 2.5
 DURACION_AVISO_DIA = 5.0
 BOTON_PAUSA = (156, 14, 36, 36)
+
+# ---------------------------------------------------------------- HUD (barra de arriba)
+RECT_HUD = (10, 8, 940, 56)
+RECT_BARRA_META = (206, 20, 230, 24)
+POS_MONEDERO = (456, 22)
+POS_PREPARANDO = (655, 14)             # texto "Preparando" (el nombre va 20 px más abajo)
+POS_BANDEJA_HUD = (810, 16)            # primera casilla de la bandeja
+TAM_CASILLA_BANDEJA = 38
+SEPARACION_CASILLA_BANDEJA = 42
 
 ESCENAS_VINETAS = ["escena_calle", "escena_salmon", "escena_delantal"]
 

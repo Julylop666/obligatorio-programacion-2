@@ -7,7 +7,8 @@ así los pixeles quedan nítidos. Podés editar las grillas para cambiar el dibu
 """
 import functools
 import pygame
-from ajustes import (COLORES_PASTEL as C, PX_GATO, PX_ITEM, COLOR_OJOS_CLIENTE)
+from ajustes import (COLORES_PASTEL as C, PX_GATO, PX_ITEM, COLOR_OJOS_CLIENTE, ALTO_SOMBRERO,
+                     VELOCIDAD_ANIMACION, GROSOR_BORDE_PANEL)
 
 
 # ---------------------------------------------------------------- colores y pixelado
@@ -51,7 +52,7 @@ def dibujar_panel(pantalla, rect, color=None, radio=18):
     """
     color = color or C["panel"]
     rect = pygame.Rect(rect)
-    b = 4                                             # grosor del borde (un pixel del mundo)
+    b = GROSOR_BORDE_PANEL
     x, y, w, h = rect
     for caja in ((x + b, y, w - 2 * b, h), (x, y + b, w, h - 2 * b)):
         pygame.draw.rect(pantalla, C["zocalo"], caja)
@@ -90,16 +91,16 @@ def texto_centrado(pantalla, texto, fuente, color, centro):
 # ---------------------------------------------------------------- ítems (pixel art)
 _PAL_ITEM = {
     "O": C["contorno"],
-    "W": (255, 252, 246),
-    "M": (244, 228, 205),
+    "W": C["leche"],
+    "M": C["espuma"],
     "C": C["cafe"],
-    "Y": (236, 174, 86),
-    "D": (203, 132, 58),
+    "Y": C["masa_clara"],
+    "D": C["masa_oscura"],
     "K": C["chocolate"],
     "Q": C["caramelo"],
-    "V": (245, 210, 110),  # Amarillo cálido/dorado para el jarabe de vainilla
-    "S": (155, 112, 55),
-    "R": (240, 110, 150),  # Cobertura rosa de frutilla
+    "V": C["vainilla"],  # Amarillo cálido/dorado para el jarabe de vainilla
+    "S": C["masa_sombra"],
+    "R": C["frutilla_cobertura"],  # Cobertura rosa de frutilla
 }
 
 _CAFE = (
@@ -159,7 +160,7 @@ ITEMS_PIXEL = {
 
 
 def dibujar_item(pantalla, item, centro, escala=1.0, base=False, px=None):
-    """Dibuja el ícono pixel art de un ítem ('cafe', 'medialuna', 'medialuna_chispas', ...).
+    """Dibuja el ícono pixel art de un ítem ('cafe', 'medialuna', 'medialuna_frutilla', ...).
 
     centro: punto central del ítem (o el punto de apoyo de abajo si base=True).
     px: tamaño del pixel; si no se indica se calcula a partir de escala.
@@ -175,8 +176,7 @@ def dibujar_item(pantalla, item, centro, escala=1.0, base=False, px=None):
 
 
 # ---------------------------------------------------------------- gatos (pixel art)
-ALTO_SOMBRERO = 6      # filas libres arriba de la cabeza para los gorros
-_ZAPATOS = [None, (120, 190, 235), (240, 120, 150)]    # color según el nivel de calzado
+_ZAPATOS = [None, C["zapato_celeste"], C["zapato_rosa"]]    # color según el nivel de calzado
 
 _GATO_CUERPO = (
     "..OO........OO..",
@@ -233,10 +233,11 @@ def _construir_gato(color, ojos, gorro, delantal, calzado, lentes, chaleco, fram
     zapato = _ZAPATOS[calzado] or color
     paleta = {"O": oscurecer(color, 0.38), "F": color, "L": aclarar(color, 0.55), "E": ojos,
               "P": C["rosa_oreja"], "N": C["acento"], "S": zapato}
-    ropa = {"O": C["contorno"], "W": (255, 255, 255), "P": (130, 180, 155), "A": (130, 187, 214),
-            "V": (112, 156, 124)}
+    ropa = {"O": C["contorno"], "W": C["blanco"], "P": C["cofia_verde"], "A": C["delantal_celeste"],
+            "V": C["chaleco_verde"]}
 
     def poner(grilla, fila0, colores):
+        """Pinta una grilla de texto sobre el sprite chico, desde la fila fila0 (ropa, cuerpo, patas)."""
         for y, fila in enumerate(grilla):
             for x, letra in enumerate(fila):
                 if letra in colores and 0 <= fila0 + y < chica.get_height():
@@ -254,7 +255,7 @@ def _construir_gato(color, ojos, gorro, delantal, calzado, lentes, chaleco, fram
         poner(_DELANTAL, dy + 10, ropa)
     if lentes:
         for x, y in _ANTEOJOS:
-            chica.set_at((x, dy + y), (214, 170, 90))
+            chica.set_at((x, dy + y), C["anteojos"])
     if gorro == 1:
         poner(_COFIA, dy - 1, ropa)
     elif gorro == 2:
@@ -263,13 +264,23 @@ def _construir_gato(color, ojos, gorro, delantal, calzado, lentes, chaleco, fram
 
 
 def frame_caminata(t_anim, camina):
+    """Devuelve qué cuadro de las patitas (0 a 3) toca mostrar según el tiempo caminando.
+
+    Si el gato está quieto devuelve 0 (patitas juntas).
+    """
     if not camina:
         return 0
-    return (1, 0, 3, 2)[int(t_anim * 9) % 4]
+    return (1, 0, 3, 2)[int(t_anim * VELOCIDAD_ANIMACION) % 4]
 
 
 def dibujar_gato(pantalla, centro, color, ropa=None, escala=1.0, lentes=False, ojos=None,
                  frame=0, mirando=1, chaleco=False):
+    """Dibuja un gato pixel art con su sombra, centrado en 'centro'.
+
+    color: pelaje. ropa: diccionario con 'gorro', 'delantal' y 'calzado' (como el del Jugador).
+    escala: tamaño relativo. frame: cuadro de las patitas. mirando: 1 derecha, -1 izquierda.
+    lentes y chaleco son para Don Salmón; ojos cambia el color de los ojos.
+    """
     ropa = ropa or {}
     px = max(1, round(escala * PX_GATO))
     sprite = _construir_gato(tuple(color), tuple(ojos or COLOR_OJOS_CLIENTE), ropa.get("gorro", 0),
@@ -286,6 +297,10 @@ def dibujar_gato(pantalla, centro, color, ropa=None, escala=1.0, lentes=False, o
 
 
 def dibujar_bandeja(pantalla, centro, items, capacidad, color, mirando=1, frame=0):
+    """Dibuja el bracito del gato sosteniendo una bandeja con los ítems que lleva.
+
+    capacidad define el ancho de la bandeja; mirando decide de qué lado del gato va.
+    """
     cx, cy = centro
     px, d = PX_GATO, mirando
     borde = oscurecer(color, 0.38)
