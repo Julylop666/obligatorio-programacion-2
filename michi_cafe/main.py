@@ -17,6 +17,7 @@ from clientes import crear_cliente, asignar_mesas
 from dibujo import (dibujar_gato, dibujar_item, dibujar_panel, texto_envuelto,
                     texto_centrado, frame_caminata)
 from escenas import crear_escenas
+from ventana import VentanaDia
 
 
 def cargar_sonidos():
@@ -36,7 +37,7 @@ def cargar_sonidos():
         ruta = os.path.join(RUTA_SONIDOS, archivo)
         try:
             sonido = pygame.mixer.Sound(ruta)
-            sonido.set_volume(VOLUMEN_EFECTOS)
+            sonido.set_volume(VOLUMEN_EFECTOS * VOLUMEN_RELATIVO.get(clave, 1.0))
             sonidos[clave] = sonido
         except (pygame.error, FileNotFoundError) as error:
             print(f"Aviso: no se pudo cargar {ruta}: {error}")
@@ -65,7 +66,10 @@ def cargar_fuente(tamano):
 
 
 def crear_fondo():
-    """Dibuja el salón en pixel art (piso a cuadros, pared, zócalo, ventana, puerta). Devuelve una Surface."""
+    """Dibuja el salón en pixel art (piso a cuadros, pared, zócalo, puerta). Devuelve una Surface.
+
+    La ventana NO se dibuja acá: cambia con el paso del tiempo y la dibuja ventana.py en cada cuadro.
+    """
     px = PX_MUNDO
     azar = random.Random(7)                       # semilla fija: el piso siempre queda igual
     chica = pygame.Surface((ANCHO // px, ALTO // px))
@@ -75,18 +79,12 @@ def crear_fondo():
             if (fila // 10 + col // 10) % 2:
                 pygame.draw.rect(chica, C["piso_b"], (col, fila, 10, 10))
     for _ in range(320):                          # puntitos de textura en el piso
-        chica.set_at((azar.randrange(0, ANCHO // px), azar.randrange(44, ALTO // px)), C["piso_punto"])
-    pygame.draw.rect(chica, C["pared"], (0, 0, ANCHO // px, 41))
+        chica.set_at((azar.randrange(0, ANCHO // px), azar.randrange(FILAS_PARED + 3, ALTO // px)), C["piso_punto"])
+    pygame.draw.rect(chica, C["pared"], (0, 0, ANCHO // px, FILAS_PARED))
     for x in range(0, ANCHO // px, 8):            # papel tapiz a rayas
-        pygame.draw.rect(chica, C["papel_rayas"], (x, 0, 2, 38))
-    pygame.draw.rect(chica, C["zocalo"], (0, 38, ANCHO // px, 3))
-    pygame.draw.rect(chica, C["contorno"], (0, 41, ANCHO // px, 1))
-    pygame.draw.rect(chica, C["contorno"], (211, 20, 18, 16))                # ventana
-    pygame.draw.rect(chica, C["cielo_c"], (212, 21, 16, 14))
-    pygame.draw.line(chica, C["leche"], (220, 21), (220, 34))
-    pygame.draw.line(chica, C["leche"], (212, 28), (227, 28))
-    pygame.draw.rect(chica, C["acento"], (211, 20, 3, 16))                   # cortinas
-    pygame.draw.rect(chica, C["acento"], (226, 20, 3, 16))
+        pygame.draw.rect(chica, C["papel_rayas"], (x, 0, 2, FILAS_PARED - 3))
+    pygame.draw.rect(chica, C["zocalo"], (0, FILAS_PARED - 3, ANCHO // px, 3))
+    pygame.draw.rect(chica, C["contorno"], (0, FILAS_PARED, ANCHO // px, 1))
     pygame.draw.rect(chica, C["contorno"], (0, 129, 6, 27))                  # puerta
     pygame.draw.rect(chica, C["barra"], (0, 130, 5, 25))
     pygame.draw.rect(chica, C["dorado"], (3, 142, 1, 2))
@@ -124,6 +122,7 @@ class Juego:
         self.sonidos = cargar_sonidos()
         self.musica_ok = iniciar_musica() if self.sonidos else False
         self.fondo = crear_fondo()
+        self.ventana = VentanaDia()
         self.escenas = crear_escenas(self.fuente_titulo, self.fuente_l)
         self.velo_pausa = pygame.Surface((ANCHO, ALTO), pygame.SRCALPHA)
         self.velo_pausa.fill(COLOR_VELO_PAUSA)
@@ -160,6 +159,7 @@ class Juego:
         self.estaciones = crear_estaciones(1)
         self.mesas = crear_mesas()
         self.t_llegada = 0.0
+        self.ventana.reiniciar()
 
     def iniciar_dia(self):
         """Prepara un día de trabajo: salón vacío, meta del día y primer cliente en 2 segundos."""
@@ -169,6 +169,7 @@ class Juego:
         self.mesas = crear_mesas()
         self.jugador.reiniciar_posicion()
         self.t_llegada = 2.0
+        self.ventana.reiniciar()                      # cada día arranca de mañana
         self.pausado = False
         self.estado = JUGANDO
         texto = f"Día {self.dia}: juntá ${NIVELES[self.dia]['meta']}"
@@ -271,6 +272,7 @@ class Juego:
         if self.pausado:
             return
         self.aviso_t = max(0.0, self.aviso_t - dt)
+        self.ventana.actualizar(dt, self.dinero_dia / NIVELES[self.dia]["meta"])
         if self.estado != JUGANDO:
             return
         self.jugador.mover(dt, pygame.key.get_pressed(), [m.rect for m in self.mesas])
@@ -285,7 +287,7 @@ class Juego:
         if sin_mesa >= MAX_COLA:
             self.estado = DERROTA
         elif self.dinero_dia >= NIVELES[self.dia]["meta"]:
-            self.reproducir("caja")
+            self.reproducir("dia_completo")
             self.estado = DIA_COMPLETADO
 
     # ------------------------------------------------------------ dibujo
@@ -350,9 +352,14 @@ class Juego:
         estado_audio = "Sonido: activado" if self.sonidos else "Sonido: no disponible (mirá la consola)"
         texto_centrado(self.pantalla, estado_audio, self.fuente_s, C["acento"], (ANCHO // 2, 455))
 
-    def dibujar_juego(self):
-        """Dibuja el salón: fondo, estaciones, mesas, clientes, jugador y HUD."""
+    def dibujar_salon(self):
+        """Dibuja el fondo del salón y la ventana con el cielo del momento del día."""
         self.pantalla.blit(self.fondo, (0, 0))
+        self.ventana.dibujar(self.pantalla)
+
+    def dibujar_juego(self):
+        """Dibuja el salón: fondo, ventana, estaciones, mesas, clientes, jugador y HUD."""
+        self.dibujar_salon()
         cercano = objeto_cercano(self.jugador, self.objetos_activos())
         for estacion in self.estaciones:
             estacion.dibujar(self.pantalla, self.fuente_xs, estacion is cercano)
@@ -405,7 +412,7 @@ class Juego:
 
     def dibujar_mensaje(self, titulo, lineas, pie):
         """Dibuja una pantalla de mensaje (día completado, derrota, victoria) sobre el salón."""
-        self.pantalla.blit(self.fondo, (0, 0))
+        self.dibujar_salon()
         dibujar_panel(self.pantalla, (160, 130, 640, 380))
         texto_centrado(self.pantalla, titulo, self.fuente_xl, C["acento"], (ANCHO // 2, 190))
         for i, linea in enumerate(lineas):

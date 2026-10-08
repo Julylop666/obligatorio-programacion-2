@@ -176,7 +176,7 @@ def dibujar_item(pantalla, item, centro, escala=1.0, base=False, px=None):
 
 
 # ---------------------------------------------------------------- gatos (pixel art)
-_ZAPATOS = [None, C["zapato_celeste"], C["zapato_rosa"]]    # color según el nivel de calzado
+_ZAPATOS = [None, C["zapato_celeste"], C["zapato_verde"]]    # color según el nivel de calzado
 
 _GATO_CUERPO = (
     "..OO........OO..",
@@ -232,7 +232,7 @@ def _construir_gato(color, ojos, gorro, delantal, calzado, lentes, chaleco, fram
     dy = ALTO_SOMBRERO - (1 if frame in (1, 3) else 0)
     zapato = _ZAPATOS[calzado] or color
     paleta = {"O": oscurecer(color, 0.38), "F": color, "L": aclarar(color, 0.55), "E": ojos,
-              "P": C["rosa_oreja"], "N": C["acento"], "S": zapato}
+              "P": C["rosa_oreja"], "N": C["rosa_nariz"], "S": zapato}
     ropa = {"O": C["contorno"], "W": C["blanco"], "P": C["cofia_verde"], "A": C["delantal_celeste"],
             "V": C["chaleco_verde"]}
 

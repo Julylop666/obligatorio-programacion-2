@@ -51,7 +51,7 @@ _ICONO_ESPRESSO = (
     ".....OWWO.....",
     ".OOOOOOOOOOOO.",
 )
-_PAL_ESPRESSO = {"O": C["contorno"], "G": C["metal_espresso"], "P": C["rosa_boton"], "J": C["luz_amarilla"],
+_PAL_ESPRESSO = {"O": C["contorno"], "G": C["metal_espresso"], "P": C["boton_espresso"], "J": C["luz_amarilla"],
                  "K": C["cafe"], "W": C["leche"]}
 
 _ICONO_FRASCO = (
@@ -68,7 +68,7 @@ _ICONO_FRASCO = (
     "OOOOOOOOO",
 )
 _PAL_FRUTILLA = {"O": C["contorno"], "L": C["frutilla_tapa"], "W": C["frutilla_crema"], "C": C["frutilla_pintitas"]}
-_PAL_DULCE = {"O": C["contorno"], "L": C["rosa_claro"], "W": C["dulce_base"], "C": C["dulce_pintitas"]}
+_PAL_DULCE = {"O": C["contorno"], "L": C["menta"], "W": C["dulce_base"], "C": C["dulce_pintitas"]}
 _PAL_SYRUP = {"O": C["contorno"], "L": C["vainilla_tapa"], "W": C["vainilla_crema"], "C": C["vainilla_pintitas"]}
 
 _PLATO = (
@@ -180,7 +180,7 @@ class EstacionLeche(Estacion):
         if jugador.taza != TAZA_VACIA:
             return "Ya tenés una taza en preparación.", None, 0
         jugador.taza = TAZA_LECHE
-        return "Recogiste leche. Ahora al vaporizador.", "miau", 0
+        return "Recogiste leche. Ahora al vaporizador.", "leche", 0
 
 
 class EstacionVapor(Estacion):
@@ -223,7 +223,7 @@ class EstacionEspresso(Estacion):
             return "La bandeja está llena, entregá algo primero.", None, 0
         jugador.taza = TAZA_VACIA
         jugador.agregar_item("cafe")
-        return "¡Café con leche listo!", "vapor", 0
+        return "¡Café con leche listo!", "espresso", 0
 
 
 class ExhibidorMedialunas(Estacion):
@@ -243,7 +243,7 @@ class ExhibidorMedialunas(Estacion):
     def interactuar(self, jugador):
         """Agrega una medialuna simple a la bandeja si hay lugar."""
         if jugador.agregar_item("medialuna"):
-            return "Medialuna calentita en la bandeja.", "miau", 0
+            return "Medialuna calentita en la bandeja.", "medialuna", 0
         return "La bandeja está llena.", None, 0
 
 
@@ -266,7 +266,7 @@ class EstacionTopping(Estacion):
         if "medialuna" not in jugador.bandeja:
             return "Primero llevá una medialuna simple en la bandeja.", None, 0
         jugador.bandeja[jugador.bandeja.index("medialuna")] = self.item_resultado
-        return self.mensaje, "miau", 0
+        return self.mensaje, "topping", 0
 
 
 class EstacionFrutilla(EstacionTopping):
@@ -303,7 +303,7 @@ class EstacionSyrup(Estacion):
         if "cafe" not in jugador.bandeja:
             return "Primero llevá un café simple en la bandeja.", None, 0
         jugador.bandeja[jugador.bandeja.index("cafe")] = "cafe_syrup"
-        return "¡Café con vainilla!", "miau", 0
+        return "¡Café con vainilla!", "topping", 0
 
 
 class EstacionBasura(Estacion):
@@ -324,7 +324,7 @@ class EstacionBasura(Estacion):
             return "La bandeja ya está vacía.", None, 0
         item = jugador.bandeja.pop()
         costo = PRECIOS.get(item, 0)
-        return "Ítem descartado.", "miau", -costo
+        return "Ítem descartado.", "tacho", -costo
 
 
 # ---------------------------------------------------------------- mesas
@@ -401,11 +401,11 @@ class Mesa:
         if entregados == 0:
             return "No tenés lo que pidió.", None, 0
         if cliente.pedido:
-            return "Falta algo del pedido.", "miau", 0
+            return "Falta algo del pedido.", "parcial", 0
         self.dinero = cliente.total       # deja la plata en la mesa
         self.cliente = None
         cliente.atender()
-        return "¡Pedido completo! Juntá el dinero.", "caja", 0
+        return "¡Pedido completo! Juntá el dinero.", "entrega", 0
 
 
 def crear_estaciones(dia=1):

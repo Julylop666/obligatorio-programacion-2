@@ -20,25 +20,28 @@ FPS = 60
 TITULO = "Michi Café 2D"
 
 # ---------------------------------------------------------------- colores pastel
+# Paleta "cozy menta y cielo": verdes y celestes apagados + madera y crema cálidos.
+# Solo quedan rosas las cosas que lo piden (nariz y orejas de los gatos, frutilla).
 COLORES_PASTEL = {
     "piso_a": (248, 228, 204),
     "piso_b": (241, 217, 189),
-    "pared": (255, 224, 214),
-    "zocalo": (226, 170, 150),
+    "pared": (205, 228, 218),             # verde menta apagado
+    "zocalo": (146, 190, 180),            # zócalo y bordes de paneles: verde agua apagado
     "barra": (196, 150, 110),
     "barra_tapa": (224, 186, 142),
     "mesa": (240, 205, 165),
-    "mantel": (255, 190, 202),
+    "mantel": (172, 208, 228),            # mantel celeste
     "texto": (94, 62, 52),
     "texto_claro": (255, 250, 243),
     "panel": (255, 247, 238),
-    "acento": (244, 143, 150),
+    "acento": (68, 136, 146),             # textos destacados: verde azulado
     "verde": (170, 214, 172),
     "azul": (172, 202, 236),
     "dorado": (246, 206, 124),
     "cafe": (139, 94, 60),
     "leche": (255, 252, 246),
-    "rosa_oreja": (250, 190, 200),
+    "rosa_oreja": (250, 190, 200),      # SIGUE ROSA: interior de las orejas
+    "rosa_nariz": (244, 143, 150),       # SIGUE ROSA: nariz de los gatos
     "sombra": (210, 185, 160),
     "billete": (150, 205, 150),
     "resaltado": (255, 255, 255),
@@ -48,8 +51,8 @@ COLORES_PASTEL = {
     "metal_oscuro": (150, 156, 170),
     "caramelo": (150, 80, 30),
     "chocolate": (100, 58, 40),
-    "cielo_a": (255, 214, 200),
-    "cielo_b": (255, 232, 210),
+    "cielo_a": (176, 212, 238),
+    "cielo_b": (212, 233, 242),
     "cielo_c": (196, 222, 244),
     # --- colores del arte (escenarios, íconos, ropa), agrupados por uso
     "agua": (150, 200, 240),  # agua del platito
@@ -60,14 +63,14 @@ COLORES_PASTEL = {
     "bloqueada_tapa": (200, 192, 192),  # tapa de una estación bloqueada
     "cartel_papel": (255, 248, 224),  # papel del cartelito
     "chaleco_verde": (112, 156, 124),  # chaleco de Don Salmón
-    "cielo_d": (255, 222, 204),  # franja del cielo del atardecer
-    "cielo_e": (255, 240, 220),  # franja clara del cielo
+    "cielo_d": (194, 223, 240),  # franja del cielo
+    "cielo_e": (230, 242, 242),  # franja clara del cielo
     "cofia_verde": (130, 180, 155),  # cinta de la cofia
     "delantal_celeste": (130, 187, 214),  # delantal
     "dulce_base": (176, 98, 40),  # fondo del frasco de dulce de leche
     "dulce_pintitas": (214, 140, 66),  # pintitas del frasco de dulce de leche
-    "edificio_lila": (214, 206, 230),  # edificio lila del fondo
-    "edificio_rosa": (238, 200, 200),  # edificio rosa del fondo
+    "edificio_celeste": (204, 216, 236),  # edificio celeste del fondo
+    "edificio_verde": (188, 216, 198),  # edificio verde del fondo
     "espuma": (244, 228, 205),  # espuma del café
     "farol_poste": (96, 96, 120),  # poste del farol de la calle
     "frutilla_cobertura": (240, 110, 150),  # cobertura de frutilla
@@ -82,14 +85,15 @@ COLORES_PASTEL = {
     "masa_sombra": (155, 112, 55),  # sombra de la medialuna
     "metal_espresso": (132, 124, 140),  # cuerpo de la máquina de espresso
     "nube": (255, 250, 245),  # nubes
-    "papel_rayas": (250, 212, 202),  # rayas del papel tapiz
+    "papel_rayas": (190, 217, 207),  # rayas del papel tapiz
     "pared_fachada": (255, 236, 214),  # pared de la fachada
     "piso_punto": (232, 206, 176),  # puntitos de textura del piso
     "planta": (150, 205, 150),  # hojas de las macetas
     "reflejo_ventana": (222, 238, 250),  # reflejo del vidrio
-    "rosa_boton": (248, 150, 170),  # botón rosa de la máquina de espresso
-    "rosa_claro": (248, 160, 180),  # rosa claro (toldo, tapa del dulce de leche, cortinas)
-    "rosa_crayon": (248, 143, 150),  # crayón rosa del cartelito
+    "boton_espresso": (140, 206, 184),  # botón verde de la máquina de espresso
+    "menta": (166, 212, 192),  # menta (toldo, tapa del dulce de leche, tacita del estante)
+    "cortina": (126, 182, 170),  # cortinas
+    "verde_crayon": (118, 190, 150),  # crayón verde del cartelito
     "sol_centro": (255, 246, 214),  # centro del sol
     "sol_halo": (255, 232, 196),  # halo del sol de la portada
     "sol_luz": (255, 236, 190),  # sol de la viñeta 1
@@ -106,7 +110,7 @@ COLORES_PASTEL = {
     "vereda_borde": (190, 180, 204),  # borde de la vereda
     "vereda_raya": (196, 186, 210),  # rayas de la vereda
     "zapato_celeste": (120, 190, 235),  # championes antideslizantes
-    "zapato_rosa": (240, 120, 150),  # championes de cocina
+    "zapato_verde": (112, 198, 152),  # championes de cocina
 }
 
 # Pelajes entre los que elige el jugador (nombre, color)
@@ -118,7 +122,7 @@ PELAJES = [
 ]
 COLOR_DON_SALMON = (236, 150, 118)
 COLORES_CLIENTES = [(240, 170, 100), (172, 178, 190), (200, 160, 130),
-                    (255, 205, 205), (190, 170, 220), (150, 110, 90)]
+                    (196, 222, 236), (190, 170, 220), (150, 110, 90)]
 COLOR_OJOS_JUGADOR = (70, 205, 110)
 COLOR_OJOS_CLIENTE = (50, 35, 45)
 
@@ -134,12 +138,31 @@ GROSOR_BORDE_PANEL = 4           # grosor del borde de los paneles (un pixel del
 TAM_ESCENA = (880, 320)          # tamaño en pantalla de las viñetas de la historia
 
 # cielo de la portada: franjas que van de un color inicial sumando un paso por franja
-CIELO_PORTADA_INICIO = (255, 200, 196)
-CIELO_PORTADA_PASO = (0, 4, 2)
+CIELO_PORTADA_INICIO = (172, 210, 238)
+CIELO_PORTADA_PASO = (5, 3, 0)
 CIELO_PORTADA_FRANJAS = 10
 
 # velo oscuro (con transparencia) que se pone sobre el juego al pausar
 COLOR_VELO_PAUSA = (62, 42, 50, 150)
+
+# alto de la pared del salón en pixeles del mundo (cada uno = PX_MUNDO pantalla); el zócalo son sus últimas 3 filas
+FILAS_PARED = 53
+
+# ---------------------------------------------------------------- ventana del salón (paso del tiempo)
+# El cielo de la ventana avanza de la mañana a la tarde según cuánto de la meta del día juntaste
+# (no hay temporizadores en el juego, así que el reloj nunca apura a nadie).
+POS_VENTANA = (380, 68)          # esquina de arriba a la izquierda, en pantalla
+VELOCIDAD_CIELO = 1.2            # qué tan rápido el cielo alcanza al progreso (más alto = más rápido)
+VELOCIDAD_NUBES = 1.2            # pixeles del mundo por segundo
+# Momentos del día: "t" es el progreso (0 = empieza el día, 1 = meta cumplida); entre uno y otro se mezcla.
+MOMENTOS_DIA = [
+    {"t": 0.00, "arriba": (186, 222, 240), "horizonte": (238, 240, 226), "sol": (255, 246, 206),
+     "nube": (255, 255, 255), "colina_atras": (164, 210, 182), "colina_frente": (124, 182, 150)},
+    {"t": 0.50, "arriba": (146, 202, 240), "horizonte": (216, 238, 246), "sol": (255, 244, 190),
+     "nube": (255, 255, 255), "colina_atras": (150, 204, 170), "colina_frente": (110, 176, 138)},
+    {"t": 1.00, "arriba": (166, 194, 228), "horizonte": (252, 220, 170), "sol": (255, 214, 140),
+     "nube": (255, 240, 222), "colina_atras": (168, 196, 150), "colina_frente": (128, 168, 120)},
+]
 
 # ---------------------------------------------------------------- estados del juego
 HISTORIA_INTRO = "HISTORIA_INTRO"
@@ -165,34 +188,35 @@ TAZA_CALIENTE = 2
 TAM_JUGADOR = 34
 VELOCIDAD_BASE = 230
 CAPACIDAD_BASE = 1
-POS_INICIAL = (480, 205)
+POS_INICIAL = (480, 253)
 ALCANCE_INTERACCION = 34
-ZONA_JUEGO = pygame.Rect(20, 175, 920, 445)
+ZONA_JUEGO = pygame.Rect(20, 223, 920, 397)
 
 # ---------------------------------------------------------------- estaciones y mesas
-# Ancho de 96px por mueble con un salto perfecto de 112px entre cada uno
+# Ancho de 104px por mueble con un salto de 130px entre cada uno. Las 7 de la barra están a y=128
+# (bajadas 48px para que entre la ventana del salón en la pared).
 ESTACIONES_RECT = {
-    "leche": (30, 80, 104, 72),
-    "vapor": (160, 80, 104, 72),
-    "espresso": (290, 80, 104, 72),
-    "medialunas": (420, 80, 104, 72),
-    "frutilla": (550, 80, 104, 72),
-    "dulce": (680, 80, 104, 72),
-    "syrup": (810, 80, 104, 72),
+    "leche": (30, 128, 104, 72),
+    "vapor": (160, 128, 104, 72),
+    "espresso": (290, 128, 104, 72),
+    "medialunas": (420, 128, 104, 72),
+    "frutilla": (550, 128, 104, 72),
+    "dulce": (680, 128, 104, 72),
+    "syrup": (810, 128, 104, 72),
     "basura": (830, 500, 104, 72),
 }
 
 # día desde el cual se puede usar cada estación
 DIA_ESTACION = {"frutilla": 2, "dulce": 3, "syrup": 3, "basura": 1}
-CENTROS_MESAS = [(300, 320), (500, 320), (700, 320),
-                 (300, 500), (500, 500), (700, 500)]
+CENTROS_MESAS = [(300, 344), (500, 344), (700, 344),
+                 (300, 524), (500, 524), (700, 524)]
 TAM_MESA = 80
 DESPLAZAMIENTO_ASIENTO = 65
 
 # ---------------------------------------------------------------- clientes
 PUERTA = (-40, 580)
 POS_COLA_X = 70
-POS_COLA_Y = 250
+POS_COLA_Y = 270
 SEPARACION_COLA = 60
 VELOCIDAD_CLIENTE = 130
 TIEMPO_SENTADO = 1.0
@@ -241,15 +265,27 @@ TIENDA = {
 }
 
 # ---------------------------------------------------------------- sonido
+# Cada acción tiene su propio sonido (antes "miau" sonaba en casi todo).
 ARCHIVOS_SONIDO = {
-    "miau": "miau.wav",
-    "billete": "billete.wav",
-    "vapor": "vapor.wav",
-    "caja": "caja.wav",
+    "miau": "miau.wav",              # elegir gato
+    "leche": "leche.wav",            # servir leche
+    "vapor": "vapor.wav",            # vaporizador
+    "espresso": "espresso.wav",      # máquina de espresso
+    "medialuna": "medialuna.wav",    # sacar una medialuna
+    "topping": "topping.wav",        # frutilla / dulce de leche / vainilla
+    "tacho": "tacho.wav",            # tirar un ítem
+    "parcial": "parcial.wav",        # entregaste solo una parte del pedido
+    "entrega": "entrega.wav",        # pedido completo
+    "billete": "billete.wav",        # juntar la plata de la mesa
+    "caja": "caja.wav",              # comprar ropa
+    "dia_completo": "dia_completo.wav",  # meta del día cumplida
 }
 ARCHIVO_MUSICA = "musica_lofi.wav"
-VOLUMEN_EFECTOS = 0.9
-VOLUMEN_MUSICA = 0.35
+# Los .wav ya vienen parejos (misma sonoridad, ver generar_sonidos.py). Estos volúmenes son
+# los que se usan en el juego: el general y un ajuste fino por sonido (1.0 = sin cambios).
+VOLUMEN_EFECTOS = 0.6
+VOLUMEN_MUSICA = 0.5
+VOLUMEN_RELATIVO = {"miau": 0.8, "vapor": 0.9, "caja": 0.85, "dia_completo": 0.9}
 
 # ---------------------------------------------------------------- textos
 DURACION_AVISO = 2.5

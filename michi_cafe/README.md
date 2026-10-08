@@ -23,6 +23,8 @@ No hay temporizadores ni clientes enojados: los vecinos esperan con paciencia.
 
 **Tacho:** desde el Día 1 podés tirar el último ítem de la bandeja si te equivocaste, pero se te descuenta lo que valía.
 
+**Paso del tiempo:** la ventana de la pared va de la mañana a la tarde a medida que juntás la meta del día (arranca de mañana cada día).
+
 Cada pedido aparece en un globito sobre el cliente. Entregalo en su mesa y después juntá el dinero que deja.
 
 | Ítem | Precio |
@@ -69,13 +71,14 @@ En el menú de pausa también aparece si el sonido está activado.
 |---|---|
 | `main.py` | Bucle principal, máquina de estados (clase `Juego`), pausa, pantallas y HUD |
 | `ajustes.py` | Todas las constantes: colores (incluidos los del pixel art), tamaños, velocidades, niveles, precios, tienda, desbloqueos y textos de la historia |
+| `ventana.py` | La ventana del salón: el cielo pasa de la mañana a la tarde a medida que cumplís la meta del día |
 | `jugador.py` | Clase `Jugador` (movimiento animado, bandeja, ropa y atributos) |
 | `estaciones.py` | Clases `Estacion` (leche, vapor, espresso, medialunas, frutilla, dulce de leche, vainilla, tacho) y `Mesa` |
 | `clientes.py` | Clase `Cliente` (Llegando, Sentado, Esperando, Atendido) y funciones para crear y sentar clientes |
 | `dibujo.py` | Sprites pixel art (gatos, ítems, bandeja) escritos como grillas de texto, paneles y texto |
 | `escenas.py` | Portada e ilustraciones pixel art de la historia de introducción |
-| `generar_sonidos.py` | Script que sintetiza los sonidos y la música (se ejecuta una vez; los .wav ya vienen incluidos) |
-| `sonidos/` | `miau.wav`, `billete.wav`, `vapor.wav`, `caja.wav` y `musica_lofi.wav` |
+| `generar_sonidos.py` | Script que sintetiza los sonidos y la música, normalizados por sonoridad (se ejecuta una vez; los .wav ya vienen incluidos) |
+| `sonidos/` | Un sonido por acción (`leche`, `vapor`, `espresso`, `medialuna`, `topping`, `tacho`, `parcial`, `entrega`, `billete`, `caja`, `dia_completo`, `miau`) y `musica_lofi.wav` |
 | `fuentes/` | Tipografía Jersey 15 y su licencia |
 | `test_cambios.py` | Pruebas automáticas de las estaciones nuevas (`python -m unittest test_cambios`) |
 | `requirements.txt` | Biblioteca necesaria (`pygame-ce`) |

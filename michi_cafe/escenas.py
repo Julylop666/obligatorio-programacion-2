@@ -76,7 +76,7 @@ def _cafeteria(chica, x, y):
         pygame.draw.rect(chica, C["leche"], (x + 26 + i * 10, y + 6, 5, 4))
         pygame.draw.rect(chica, C["cafe"], (x + 26 + i * 10, y + 6, 5, 1))
     for i in range(0, 100, 6):                                              # toldo a rayas
-        color = C["rosa_claro"] if (i // 6) % 2 == 0 else C["blanco"]
+        color = C["menta"] if (i // 6) % 2 == 0 else C["blanco"]
         pygame.draw.rect(chica, color, (x - 2 + i, y + 14, 6, 6))
         pygame.draw.rect(chica, color, (x - 1 + i, y + 20, 4, 2))
     pygame.draw.rect(chica, C["contorno"], (x + 6, y + 24, 46, 24))        # ventana
@@ -85,7 +85,7 @@ def _cafeteria(chica, x, y):
     pygame.draw.rect(chica, C["madera_oscura"], (x + 4, y + 47, 50, 3))    # alféizar
     pygame.draw.rect(chica, C["contorno"], (x + 17, y + 28, 22, 17))       # el cartelito
     pygame.draw.rect(chica, C["cartel_papel"], (x + 18, y + 29, 20, 15))
-    for i, color in enumerate((C["rosa_crayon"], C["azul_medio"], C["rosa_crayon"], C["azul_medio"])):
+    for i, color in enumerate((C["verde_crayon"], C["azul_medio"], C["verde_crayon"], C["azul_medio"])):
         pygame.draw.line(chica, color, (x + 20, y + 32 + i * 3), (x + 34 - (i % 2) * 3, y + 32 + i * 3))
     pygame.draw.rect(chica, C["dorado"], (x + 16, y + 28, 4, 2))        # cintas
     pygame.draw.rect(chica, C["dorado"], (x + 36, y + 28, 4, 2))
@@ -103,8 +103,8 @@ def _escena_calle():
     pygame.draw.circle(chica, C["sol_centro"], (182, 22), 8)
     for x, y in ((14, 8), (96, 5), (146, 12)):
         _nube(chica, x, y)
-    for x, ancho, techo, color in ((0, 32, 24, C["edificio_rosa"]), (30, 26, 34, C["edificio_lila"]),
-                                   (160, 28, 30, C["edificio_rosa"]), (186, 34, 18, C["edificio_lila"])):
+    for x, ancho, techo, color in ((0, 32, 24, C["edificio_verde"]), (30, 26, 34, C["edificio_celeste"]),
+                                   (160, 28, 30, C["edificio_verde"]), (186, 34, 18, C["edificio_celeste"])):
         pygame.draw.rect(chica, color, (x, techo, ancho, 62 - techo))
         for vx in range(x + 4, x + ancho - 4, 8):
             for vy in range(techo + 5, 56, 10):
@@ -136,7 +136,7 @@ def _interior(chica):
     for repisa in (14, 30):                                                 # estantes con tacitas
         pygame.draw.rect(chica, C["contorno"], (92, repisa + 4, 110, 3))
         pygame.draw.rect(chica, C["barra"], (92, repisa + 4, 110, 2))
-        for i, color in enumerate((C["taza_crema"], C["rosa_claro"], C["azul"], C["dorado"])):
+        for i, color in enumerate((C["taza_crema"], C["menta"], C["azul"], C["dorado"])):
             for x in (96 + i * 12, 148 + i * 12):
                 pygame.draw.rect(chica, color, (x, repisa, 6, 4))
                 pygame.draw.rect(chica, C["contorno"], (x, repisa + 3, 6, 1))
@@ -145,8 +145,8 @@ def _interior(chica):
     pygame.draw.circle(chica, C["sol_ventana"], (36, 18), 6)
     pygame.draw.line(chica, C["blanco"], (28, 8), (28, 38))
     pygame.draw.line(chica, C["blanco"], (10, 23), (46, 23))
-    pygame.draw.rect(chica, C["rosa_claro"], (8, 6, 5, 34))                 # cortinas
-    pygame.draw.rect(chica, C["rosa_claro"], (43, 6, 5, 34))
+    pygame.draw.rect(chica, C["cortina"], (8, 6, 5, 34))                    # cortinas
+    pygame.draw.rect(chica, C["cortina"], (43, 6, 5, 34))
     pygame.draw.line(chica, C["contorno"], (60, 0), (60, 12))               # lámpara colgante
     pygame.draw.rect(chica, C["dorado"], (54, 12, 12, 5))
     pygame.draw.rect(chica, C["sol_ventana"], (56, 17, 8, 2))
@@ -185,7 +185,7 @@ def _escena_delantal():
     escena = _agrandar(chica)
     dibujar_gato(escena, (230, 200), COLOR_DON_SALMON, escala=2.67, lentes=True, chaleco=True)
     dibujar_gato(escena, (650, 200), PELAJES[0][1], escala=2.67, ojos=COLOR_OJOS_JUGADOR, mirando=-1)
-    delantal = pixelar(_DELANTAL_GRANDE, {"O": C["contorno"], "A": C["rosa_claro"], "W": C["blanco"]}, 8)
+    delantal = pixelar(_DELANTAL_GRANDE, {"O": C["contorno"], "A": C["delantal_celeste"], "W": C["blanco"]}, 8)
     escena.blit(delantal, delantal.get_rect(center=(440, 150)))
     brillo = pixelar(_BRILLO, {"Y": C["dorado"]}, 4)
     for x, y in ((360, 80), (520, 96), (400, 230), (500, 220)):
@@ -194,7 +194,7 @@ def _escena_delantal():
 
 
 def _portada(fuente_titulo, fuente_sub):
-    """Pantalla de título: atardecer, la cafetería y los gatos baristas. Devuelve una Surface."""
+    """Pantalla de título: cielo celeste, la cafetería y los gatos baristas. Devuelve una Surface."""
     chica = pygame.Surface((ANCHO // PX_MUNDO, ALTO // PX_MUNDO))
     colores = [tuple(base + i * paso for base, paso in zip(CIELO_PORTADA_INICIO, CIELO_PORTADA_PASO))
                for i in range(CIELO_PORTADA_FRANJAS)]
@@ -203,8 +203,8 @@ def _portada(fuente_titulo, fuente_sub):
     pygame.draw.circle(chica, C["sol_centro"], (120, 104), 26)
     for x, y in ((14, 70), (190, 64), (100, 78), (36, 20), (200, 26)):
         _nube(chica, x, y)
-    for x, ancho, techo, color in ((0, 30, 100, C["edificio_rosa"]), (28, 24, 112, C["edificio_lila"]),
-                                   (176, 30, 104, C["edificio_lila"]), (206, 34, 96, C["edificio_rosa"])):
+    for x, ancho, techo, color in ((0, 30, 100, C["edificio_verde"]), (28, 24, 112, C["edificio_celeste"]),
+                                   (176, 30, 104, C["edificio_celeste"]), (206, 34, 96, C["edificio_verde"])):
         pygame.draw.rect(chica, color, (x, techo, ancho, 140 - techo))
         for vx in range(x + 4, x + ancho - 4, 8):
             for vy in range(techo + 5, 134, 10):
