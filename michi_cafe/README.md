@@ -19,7 +19,8 @@ No hay temporizadores ni clientes enojados: los vecinos esperan con paciencia.
 **Medialunas:** se sacan del exhibidor y quedan en la bandeja.
 **Estaciones que se desbloquean (las bloqueadas se ven grises con un candado y el día en que se abren):**
 - **Día 2:** los vecinos pueden pedir medialuna con **frutilla**. Llevá una medialuna simple a la estación *Frutilla*.
-- **Día 3:** también piden medialuna con **dulce de leche** (estación *Dulce de leche*) y **café con vainilla** (llevá un café simple a la estación *Vainilla*).
+- **Día 3:** también piden medialuna con **dulce de leche** (estación *Dulce de leche*).
+- **Día 4:** también piden **café con vainilla** (llevá un café simple a la estación *Vainilla*).
 
 **Tacho:** desde el Día 1 podés tirar el último ítem de la bandeja si te equivocaste, pero se te descuenta lo que valía.
 
@@ -48,6 +49,7 @@ Cada pedido aparece en un globito sobre el cliente. Entregalo en su mesa y despu
 - **Delantal gastronómico:** más dinero por pedido (+20%).
 - **Cofia / sombrero de chef:** la bandeja carga 2 o 3 ítems.
 - **Championes antideslizantes / championes de cocina:** más velocidad (+15% / +30%).
+- **Desbloqueos:** los championes de cocina están disponibles desde la tienda del Día 2; el sombrero de chef, desde la del Día 3. Cada prenda avanzada requiere comprar primero su versión anterior.
 
 ## Instalación y ejecución
 

@@ -122,7 +122,7 @@ PELAJES = [
 ]
 COLOR_DON_SALMON = (236, 150, 118)
 COLORES_CLIENTES = [(240, 170, 100), (172, 178, 190), (200, 160, 130),
-                    (196, 222, 236), (190, 170, 220), (150, 110, 90)]
+                    (96, 122, 136), (255, 255, 255), (150, 110, 90)]
 COLOR_OJOS_JUGADOR = (70, 205, 110)
 COLOR_OJOS_CLIENTE = (50, 35, 45)
 
@@ -207,7 +207,7 @@ ESTACIONES_RECT = {
 }
 
 # día desde el cual se puede usar cada estación
-DIA_ESTACION = {"frutilla": 2, "dulce": 3, "syrup": 3, "basura": 1}
+DIA_ESTACION = {"frutilla": 2, "dulce": 3, "syrup": 4, "basura": 1}
 CENTROS_MESAS = [(300, 344), (500, 344), (700, 344),
                  (300, 524), (500, 524), (700, 524)]
 TAM_MESA = 80
@@ -228,12 +228,13 @@ PRECIOS = {"cafe": 12, "cafe_syrup": 14, "medialuna": 8, "medialuna_frutilla": 1
 NOMBRES_ITEMS = {"cafe": "Café con leche", "cafe_syrup": "Café con vainilla",
                  "medialuna": "Medialuna", "medialuna_frutilla": "Medialuna con frutilla",
                  "medialuna_dulce": "Medialuna con dulce de leche"}
-DIA_ITEM = {"cafe": 1, "cafe_syrup": 3, "medialuna": 1, "medialuna_frutilla": 2,
+DIA_ITEM = {"cafe": 1, "cafe_syrup": 4, "medialuna": 1, "medialuna_frutilla": 2,
             "medialuna_dulce": 3}
 
 AVISOS_DESBLOQUEO = {
     2: "¡Novedad! Medialunas con frutilla.\nSacá una medialuna y pasala por la estación de Frutilla.",
-    3: "¡Novedad! Café con vainilla y medialunas con dulce de leche.\nUsá el jarabe y el frasco de dulce de leche.",
+    3: "¡Novedad! Medialunas con dulce de leche.\nPasá una medialuna por la estación de Dulce de leche.",
+    4: "¡Novedad! Café con vainilla.\nLlevá un café simple a la estación Vainilla.",
 }
 
 NIVELES = {
@@ -258,9 +259,11 @@ TIENDA = {
                      "detalle": "Bandeja para 2 ítems"},
     "championes_2": {"nombre": "Championes de cocina", "precio": 60, "slot": "calzado", "nivel": 2,
                      "atributo": "velocidad", "valor": 1.30, "requiere": "championes_1",
+                     "dia_desbloqueo": 2,
                      "detalle": "+30% de velocidad"},
     "gorro_2":      {"nombre": "Sombrero de chef", "precio": 90, "slot": "gorro", "nivel": 2,
                      "atributo": "capacidad_bandeja", "valor": 3, "requiere": "gorro_1",
+                     "dia_desbloqueo": 3,
                      "detalle": "Bandeja para 3 ítems"},
 }
 

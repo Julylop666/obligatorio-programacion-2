@@ -7,6 +7,7 @@ from estaciones import (EstacionBasura, EstacionSyrup, EstacionLeche, EstacionEs
                         EstacionFrutilla, crear_estaciones)
 from jugador import Jugador
 from ventana import VentanaDia, momento_del_dia
+from main import Juego, prenda_desbloqueada
 
 
 class CambiosJuegoTest(unittest.TestCase):
@@ -32,13 +33,13 @@ class CambiosJuegoTest(unittest.TestCase):
         self.assertEqual(resultado, ("Ítem descartado.", "tacho", -12))
         self.assertEqual(jugador.bandeja, [])
 
-    def test_syrup_desbloquea_en_el_dia_3(self):
-        """La estación de vainilla recién está activa desde el día 3."""
-        estaciones = crear_estaciones(2)
+    def test_syrup_desbloquea_en_el_dia_4(self):
+        """La estación de vainilla recién está activa desde el día 4."""
+        estaciones = crear_estaciones(3)
         self.assertNotIn("syrup", [estacion.clave for estacion in estaciones if estacion.activa])
 
-        estaciones_dia_3 = crear_estaciones(3)
-        self.assertIn("syrup", [estacion.clave for estacion in estaciones_dia_3 if estacion.activa])
+        estaciones_dia_4 = crear_estaciones(4)
+        self.assertIn("syrup", [estacion.clave for estacion in estaciones_dia_4 if estacion.activa])
 
     def test_syrup_transforma_un_cafe_en_cafe_con_vainilla(self):
         """La vainilla convierte un café simple en café con vainilla."""
@@ -50,10 +51,36 @@ class CambiosJuegoTest(unittest.TestCase):
         self.assertEqual(resultado[0], "¡Café con vainilla!")
         self.assertEqual(jugador.bandeja, ["cafe_syrup"])
 
-    def test_syrup_disponible_desde_el_dia_3(self):
-        """El café con vainilla se pide desde el día 3 y los championes van en el slot calzado."""
-        self.assertEqual(DIA_ITEM["cafe_syrup"], 3)
+    def test_syrup_disponible_desde_el_dia_4(self):
+        """El café con vainilla se pide desde el día 4 y los championes van en el slot calzado."""
+        self.assertEqual(DIA_ITEM["cafe_syrup"], 4)
         self.assertEqual(TIENDA["championes_1"]["slot"], "calzado")
+
+    def test_sombrero_de_chef_se_desbloquea_un_dia_despues_de_los_championes(self):
+        """El sombrero queda bloqueado un día después de desbloquear los championes de cocina."""
+        championes = TIENDA["championes_2"]
+        sombrero = TIENDA["gorro_2"]
+        self.assertFalse(prenda_desbloqueada(championes, 1))
+        self.assertFalse(prenda_desbloqueada(sombrero, 1))
+        self.assertTrue(prenda_desbloqueada(championes, 2))
+        self.assertFalse(prenda_desbloqueada(sombrero, 2))
+        self.assertTrue(prenda_desbloqueada(sombrero, 3))
+
+    def test_no_se_puede_comprar_el_sombrero_antes_de_su_desbloqueo(self):
+        """La compra rechaza el sombrero antes del día indicado."""
+        juego = Juego.__new__(Juego)
+        juego.dia = 2
+        juego.jugador = Jugador((240, 170, 100))
+        juego.jugador.compras.add("gorro_1")
+        juego.monedero = 100
+        avisos = []
+        juego.avisar = avisos.append
+
+        juego.comprar("gorro_2")
+
+        self.assertNotIn("gorro_2", juego.jugador.compras)
+        self.assertEqual(juego.monedero, 100)
+        self.assertEqual(avisos, ["Se desbloquea el día 3."])
 
     def test_basura_esta_a_la_derecha_y_frente_al_salon(self):
         """El tacho está en la posición definida en ajustes."""

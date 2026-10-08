@@ -65,6 +65,11 @@ def cargar_fuente(tamano):
         return pygame.font.Font(None, int(tamano * 1.2))
 
 
+def prenda_desbloqueada(prenda, dia):
+    """Indica si la prenda ya está disponible en la tienda de este día."""
+    return dia >= prenda.get("dia_desbloqueo", 1)
+
+
 def crear_fondo():
     """Dibuja el salón en pixel art (piso a cuadros, pared, zócalo, puerta). Devuelve una Surface.
 
@@ -192,6 +197,8 @@ class Juego:
         prenda = TIENDA[clave]
         if clave in self.jugador.compras:
             self.avisar("Ya tenés esa prenda.")
+        elif not prenda_desbloqueada(prenda, self.dia):
+            self.avisar(f"Se desbloquea el día {prenda['dia_desbloqueo']}.")
         elif prenda["requiere"] and prenda["requiere"] not in self.jugador.compras:
             self.avisar("Primero comprá la prenda anterior.")
         elif self.monedero < prenda["precio"]:
@@ -427,14 +434,18 @@ class Juego:
         for i, (clave, prenda) in enumerate(TIENDA.items()):
             fila = pygame.Rect(120, 140 + i * 66, 720, 58)
             dibujar_panel(self.pantalla, fila, C["panel"])
+            detalle = prenda["detalle"]
             if clave in self.jugador.compras:
                 estado = "COMPRADO"
+            elif not prenda_desbloqueada(prenda, self.dia):
+                estado = "BLOQUEADO"
+                detalle += f" · Disponible desde el día {prenda['dia_desbloqueo']}"
             elif prenda["requiere"] and prenda["requiere"] not in self.jugador.compras:
                 estado = "BLOQUEADO"
             else:
                 estado = f"${prenda['precio']}"
             self.pantalla.blit(self.fuente_m.render(f"[{i + 1}] {prenda['nombre']}", False, C["texto"]), (142, fila.top + 6))
-            self.pantalla.blit(self.fuente_s.render(prenda["detalle"], False, C["texto"]), (142, fila.top + 33))
+            self.pantalla.blit(self.fuente_s.render(detalle, False, C["texto"]), (142, fila.top + 33))
             texto_centrado(self.pantalla, estado, self.fuente_m, C["acento"], (fila.right - 90, fila.centery))
         dibujar_gato(self.pantalla, (900, 300), self.jugador.color, self.jugador.ropa, escala=1.6,
                      ojos=COLOR_OJOS_JUGADOR)
