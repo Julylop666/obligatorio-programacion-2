@@ -72,7 +72,7 @@ winget install --id Python.Python.3.12 --exact
 
 Al terminar, cerrá y volvé a abrir la terminal para que reconozca el comando `py`. Si no tenés `winget`, descargá Python desde [python.org](https://www.python.org/downloads/) y, durante la instalación, marcá **Add python.exe to PATH**.
 
-Desde esta carpeta (`Purr_&_Brew`), instalá la biblioteca que usa el juego y ejecutalo:
+Desde esta carpeta, instalá la biblioteca que usa el juego y ejecutalo:
 
 ```powershell
 py -m pip install -r requirements.txt
@@ -116,5 +116,6 @@ En el menú de pausa también aparece si el sonido está activado.
 - **Tipografía:** [Jersey 15](https://github.com/scfried/soft-type-jersey), de The Soft Type Project, licencia SIL Open Font License 1.1 (texto completo en `fuentes/OFL.txt`). Es de uso libre, incluso para entregas académicas.
 
 ## Uso de Inteligencia Artificial Generativa
-- **Herramienta:** Claude (Anthropic).
-- **Contexto de uso:** generación del código del juego a partir de mi especificación (concepto, historia, mecánicas, arquitectura de módulos y reglas) y de mis pedidos de cambio (pixel art, toppings de medialunas, pausa, bandeja en la mano, ojos verdes, tutorial corto, control de volumen, teclas M y N, brillo en las mesas con plata, etc.).
+- **Claude (Anthropic):** generación del código del juego a partir de mi especificación (concepto, historia, mecánicas, arquitectura de módulos y reglas) y de mis pedidos de cambio (pixel art, toppings de medialunas, pausa, bandeja en la mano, ojos verdes, tutorial corto, control de volumen, teclas M y N, brillo en las mesas con plata, etc.). También lo usé para redactar borradores de documentación y para componer el afiche.
+- **Gemini y GitHub Copilot:** dentro de Visual Studio Code, como ayuda en tiempo real para programar y depurar.
+- **Autoría:** la idea, el concepto y las decisiones de diseño son propias. Todo el contenido generado por IA fue revisado, probado y adaptado por mí.
