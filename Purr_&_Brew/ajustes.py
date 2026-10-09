@@ -1,4 +1,4 @@
-"""ajustes.py - Constantes de Michi Café 2D.
+"""ajustes.py - Constantes de Purr & Brew 2D.
 
 Acá viven TODOS los colores, tamaños, velocidades, textos de la historia,
 los niveles (metas de dinero por día) y la tienda de ropa.
@@ -17,7 +17,7 @@ RUTA_FUENTE = os.path.join(RUTA_BASE, "fuentes", "Jersey15.ttf")
 ANCHO = 960
 ALTO = 640
 FPS = 60
-TITULO = "Michi Café 2D"
+TITULO = "Purr & Brew 2D"
 
 # ---------------------------------------------------------------- colores pastel
 # Paleta "cozy menta y cielo": verdes y celestes apagados + madera y crema cálidos.

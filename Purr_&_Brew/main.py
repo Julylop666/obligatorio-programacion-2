@@ -1,4 +1,4 @@
-"""main.py - Michi Café 2D: bucle principal y máquina de estados.
+"""main.py -  Purr & Brew 2D: bucle principal y máquina de estados.
 
 Estados: HISTORIA_INTRO -> SELECCION_GATO -> JUGANDO -> DIA_COMPLETADO
          -> TIENDA_MEJORAS -> JUGANDO (día siguiente) ... -> VICTORIA_FINAL
@@ -409,7 +409,7 @@ class Juego:
     def dibujar_seleccion(self):
         """Dibuja la pantalla para elegir el color de pelaje del gato."""
         self.pantalla.fill(C["pared"])
-        texto_centrado(self.pantalla, "Elegí tu michi", self.fuente_xl, C["texto"], (ANCHO // 2, 80))
+        texto_centrado(self.pantalla, "Elegí tu pelaje", self.fuente_xl, C["texto"], (ANCHO // 2, 80))
         for i, (nombre, color) in enumerate(PELAJES):
             centro = (150 + i * 220, 330)
             elegido = i == self.indice_gato

@@ -219,7 +219,7 @@ def _portada(fuente_titulo, fuente_sub):
     dibujar_gato(portada, (900, 590), PELAJES[1][1], {"delantal": True, "gorro": 1}, escala=1.67,
                  mirando=-1)
     for dx, dy, color in ((6, 6, C["zocalo"]), (0, 0, C["texto"])):          # título con sombra
-        texto_centrado(portada, "Michi Café", fuente_titulo, color, (ANCHO // 2 + dx, 120 + dy))
+        texto_centrado(portada, "Purr & Brew", fuente_titulo, color, (ANCHO // 2 + dx, 120 + dy))
     texto_centrado(portada, "2D", fuente_titulo, C["acento"], (ANCHO // 2, 200))
     texto_centrado(portada, "Un juego cozy de cafetería", fuente_sub, C["texto"], (ANCHO // 2, 262))
     return portada
