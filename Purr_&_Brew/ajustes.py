@@ -318,7 +318,7 @@ VINETAS = [
  "Te recibiste de Diseñador con el mejor promedio. Armaste tu portafolio en Behance "
  "con obras digitales hermosas, pero el mercado está difícil y no sale nada. Caminando por el barrio "
  "ves un cartelito escrito con marcador en la ventana de una cafetería: \"Se busca barista "
- "principiante. Se enseña desde cero. Hay leche de dulce de leche y buena onda.\""),
+ "principiante. Se enseña desde cero. Hay dulce de leche y buena onda.\""),
 
 ("Don Salmón",
  "Te recibe Don Salmón, un gato viejo, esponjoso, con lentes en la punta de la nariz y un "
@@ -327,7 +327,7 @@ VINETAS = [
  "voy unos días a la casa de mi hermana en el campo a tomar un poco de solcito...\""),
 
 ("El trato",
- "\"Tranqui que acá nadie nace sabiendo, yo te enseño. Es una pavada: agarrás la leche, la pasás "
+ "\"Tranqui que nadie nació sabiendo. Es una pavada: agarrás la leche, la pasás "
  "por el vaporizador y le servís el espresso arriba. Si te animás, sacás unas medialunas "
  "calientitas del horno y listo el pollo. Atendé a los vecinos con una sonrisa, juntá tu platita "
  "y si te entusiasmás, en el ropero del fondo hay delantales y gorritos re coquetos. "

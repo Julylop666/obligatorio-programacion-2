@@ -151,25 +151,30 @@ def _ilus_recetas(l, f):
 def _ilus_atender(l, f):
     """Mirar el globito, entregar el pedido y juntar la plata (que brilla en la mesa)."""
     pasos = ("Mirá el globito", "Llevale el pedido y apretá E", "Juntá la plata con E")
-    for i, paso in enumerate(pasos):
-        _numero(l, f, (24 + i * 293, 24), i + 1)
-        l.blit(f["s"].render(paso, False, C["texto"]), (46 + i * 293, 12))
-    for x in (293, 586):
-        pygame.draw.line(l, C["zocalo"], (x - 4, 44), (x - 4, 244), 3)
-    mesa = Mesa((170, 190))                                   # 1: el vecino con su pedido
+    ancho = l.get_width()
+    centros = [round(ancho * (i + 0.5) / 3) for i in range(3)]
+    for i, (paso, centro) in enumerate(zip(pasos, centros)):
+        _numero(l, f, (centro, 24), i + 1)
+        texto_centrado(l, paso, f["s"], C["texto"], (centro, 62))
+    for i in (1, 2):
+        x = round(ancho * i / 3)
+        pygame.draw.line(l, C["zocalo"], (x, 82), (x, 244), 3)
+
+    mesa = Mesa((centros[0] + 33, 190))                       # 1: el vecino con su pedido
     mesa.dibujar(l, f["s"])
     cliente = Cliente(["cafe", "medialuna_frutilla"], (172, 178, 190))
-    cliente.pos = pygame.math.Vector2(105, 190)
+    cliente.pos = pygame.math.Vector2(centros[0] - 32, 190)
     cliente.estado = ESPERANDO
     cliente.dibujar(l)
-    _gato_jugador(l, (385, 195), ropa={"gorro": 1}, bandeja=["cafe", "medialuna_frutilla"], capacidad=2)
-    _flecha(l, (425, 195), (480, 195), grosor=5)               # 2: se lo lleva a su mesa
-    Mesa((540, 195)).dibujar(l, f["s"], True)
-    con_plata = Mesa((733, 176))                               # 3: el vecino se fue y dejó plata
+    _gato_jugador(l, (centros[1] - 80, 190), ropa={"gorro": 1},
+                  bandeja=["cafe", "medialuna_frutilla"], capacidad=2)
+    _flecha(l, (centros[1] - 15, 190), (centros[1] + 40, 190), grosor=5)  # 2: se lo lleva a su mesa
+    Mesa((centros[1] + 70, 190)).dibujar(l, f["s"], True)
+    con_plata = Mesa((centros[2], 170))                        # 3: el vecino se fue y dejó plata
     con_plata.dinero = 23
     con_plata.dibujar(l, f["s"], True)
-    texto_centrado(l, "Hasta que no la juntes,", f["xs"], C["texto"], (733, 222))
-    texto_centrado(l, "la mesa no se libera", f["xs"], C["texto"], (733, 240))
+    texto_centrado(l, "Hasta que no la juntes,", f["xs"], C["texto"], (centros[2], 224))
+    texto_centrado(l, "la mesa no se libera", f["xs"], C["texto"], (centros[2], 242))
 
 
 # ---------------------------------------------------------------- las páginas: (título, lo que dice Don Salmón, ilustración)
