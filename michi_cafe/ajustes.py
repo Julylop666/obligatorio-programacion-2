@@ -56,7 +56,7 @@ COLORES_PASTEL = {
     "cielo_c": (196, 222, 244),
     # --- colores del arte (escenarios, íconos, ropa), agrupados por uso
     "agua": (150, 200, 240),  # agua del platito
-    "anteojos": (214, 170, 90),  # marco de los anteojos
+    "anteojos": (216, 207, 219),  # marco de los anteojos
     "azul_medio": (120, 170, 225),  # azul de la caja de leche y del crayón
     "blanco": (255, 255, 255),  # blanco puro (brillos, cofia, rayas del toldo)
     "bloqueada_madera": (170, 160, 160),  # mueble de una estación bloqueada
@@ -308,19 +308,21 @@ ESCENAS_VINETAS = ["escena_calle", "escena_salmon", "escena_delantal"]
 
 VINETAS = [
     ("El drama profesional",
-     "Te recibiste de Licenciado en Diseño con las mejores notas. Armaste tu portafolio en Behance "
-     "con tipografías hermosas, pero el mercado está bravo y no sale nada. Paseando por el barrio "
-     "ves un cartelito dibujado con crayón en la ventana de una cafetería: \"Se busca barista "
-     "principiante. Se enseña desde cero. Hay leche de almendras y buena onda.\""),
-    ("Don Salmón",
-     "Te recibe Don Salmón, un gato viejo, esponjoso, con anteojitos en la punta de la nariz y un "
-     "chaleco tejido: \"¡Buenas! Che, qué lindo tu currículum, ¡qué arte que tenés en las manos! "
-     "Mirá, la verdad es que yo ya estoy grande y los huesos me piden un descanso esta semana. Me "
-     "voy unos días a la casa de mi hermana en el campo a tomar solcito...\""),
-    ("El trato",
-     "\"Tranqui que acá nadie nace sabiendo, yo te enseño. Es una papa: agarrás la leche, la pasás "
-     "por el vaporizador y le mandás el espresso arriba. Si te animás, sacás unas medialunas "
-     "calentitas del horno y listo el pollo. Atendé a los vecinos con una sonrisa, juntá tu platita "
-     "y si te va bien, en el ropero del fondo hay delantales y gorritos re coquetos. "
-     "¡Éxitos en tu primer día!\""),
+ "Te recibiste de Diseñador con el mejor promedio. Armaste tu portafolio en Behance "
+ "con obras digitales hermosas, pero el mercado está difícil y no sale nada. Caminando por el barrio "
+ "ves un cartelito escrito con marcador en la ventana de una cafetería: \"Se busca barista "
+ "principiante. Se enseña desde cero. Hay leche de dulce de leche y buena onda.\""),
+
+("Don Salmón",
+ "Te recibe Don Salmón, un gato viejo, esponjoso, con lentes en la punta de la nariz y un "
+ "chaleco tejido: \"¡Buenas! Qué lindo tu currículum, ¡qué arte que tenés en las manos! "
+ "Mirá, la verdad es que yo ya estoy grande y el cuerpo me pide un descanso esta semana. Me "
+ "voy unos días a la casa de mi hermana en el campo a tomar un poco de solcito...\""),
+
+("El trato",
+ "\"Tranqui que acá nadie nace sabiendo, yo te enseño. Es una pavada: agarrás la leche, la pasás "
+ "por el vaporizador y le servís el espresso arriba. Si te animás, sacás unas medialunas "
+ "calientitas del horno y listo el pollo. Atendé a los vecinos con una sonrisa, juntá tu platita "
+ "y si te entusiasmás, en el ropero del fondo hay delantales y gorritos re coquetos. "
+ "¡Mucho éxito en tu primer día!\"")
 ]
