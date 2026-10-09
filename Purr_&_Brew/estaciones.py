@@ -3,6 +3,7 @@
 Todas las estaciones comparten el método interactuar(jugador), que devuelve
 una tupla (mensaje, sonido, dinero_ganado). Así main.py las trata igual.
 """
+import math
 import pygame
 from ajustes import (COLORES_PASTEL as C, ESTACIONES_RECT, DIA_ESTACION, CENTROS_MESAS, TAM_MESA,
                      DESPLAZAMIENTO_ASIENTO, TAZA_VACIA, TAZA_LECHE, TAZA_CALIENTE, ESPERANDO,
@@ -337,6 +338,17 @@ _BILLETE = (
 )
 
 
+_BRILLO = (
+    "..Y..",
+    "..Y..",
+    "YYWYY",
+    "..Y..",
+    "..Y..",
+)
+# (desvío x, desvío y) de cada brillito respecto del centro de la mesa
+_POS_BRILLOS = ((-34, -34), (36, -26), (2, -52))
+
+
 def _sprite_mesa():
     """Arma (una vez) la mesa pixel art con mantel. Devuelve una Surface de TAM_MESA de ancho."""
     px = PX_MUNDO
@@ -372,14 +384,30 @@ class Mesa:
         pygame.draw.ellipse(pantalla, C["sombra"], sombra)
         pantalla.blit(sprite, zona)
         if self.dinero > 0:
+            self.dibujar_aviso_dinero(pantalla, zona)
             billete = pixelar(_BILLETE, {"O": C["contorno"], "G": C["billete"]}, PX_GATO)
             for i in range(2):
                 pantalla.blit(billete, billete.get_rect(center=(self.rect.centerx - 6 + i * 10,
                                                                 self.rect.centery - 8 - i * 4)))
             pantalla.blit(fuente.render(f"${self.dinero}", False, C["texto"]),
                           (self.rect.centerx - 14, self.rect.centery + 2))
+            self.dibujar_brillos(pantalla)
         if resaltada:
             pygame.draw.ellipse(pantalla, C["resaltado"], zona.inflate(8, 8), 4)
+
+    def dibujar_aviso_dinero(self, pantalla, zona):
+        """Aro dorado que late alrededor de la mesa con plata, para que nadie se olvide de juntarla."""
+        pulso = (math.sin(pygame.time.get_ticks() / 1000 * 6) + 1) / 2          # 0 a 1, unas 1 vez por segundo
+        pygame.draw.ellipse(pantalla, C["brillo_dorado"], zona.inflate(10 + round(pulso * 10), 10 + round(pulso * 6)),
+                            3 + round(pulso * 2))
+
+    def dibujar_brillos(self, pantalla):
+        """Tres brillitos pixel art que titilan por turnos arriba de la plata."""
+        paso = pygame.time.get_ticks() // 280
+        brillo = pixelar(_BRILLO, {"Y": C["brillo_dorado"], "W": C["blanco"]}, PX_MUNDO)
+        for i, (dx, dy) in enumerate(_POS_BRILLOS):
+            if (paso + i) % 3 != 0:                                              # uno de cada tres está apagado
+                pantalla.blit(brillo, brillo.get_rect(center=(self.rect.centerx + dx, self.rect.centery + dy)))
 
     def interactuar(self, jugador):
         """Junta el dinero si hay, o entrega los pedidos que el jugador lleve en la bandeja."""

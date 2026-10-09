@@ -90,6 +90,7 @@ COLORES_PASTEL = {
     "piso_punto": (232, 206, 176),  # puntitos de textura del piso
     "planta": (150, 205, 150),  # hojas de las macetas
     "reflejo_ventana": (222, 238, 250),  # reflejo del vidrio
+    "brillo_dorado": (236, 166, 32),  # brillitos y aro de la mesa con plata sin juntar
     "boton_espresso": (140, 206, 184),  # botón verde de la máquina de espresso
     "menta": (166, 212, 192),  # menta (toldo, tapa del dulce de leche, tacita del estante)
     "cortina": (126, 182, 170),  # cortinas
@@ -231,10 +232,12 @@ NOMBRES_ITEMS = {"cafe": "Café con leche", "cafe_syrup": "Café con vainilla",
 DIA_ITEM = {"cafe": 1, "cafe_syrup": 4, "medialuna": 1, "medialuna_frutilla": 2,
             "medialuna_dulce": 3}
 
+AVISO_TUTORIAL = "Tutorial: T en la pausa"     # última línea (más chica) de los carteles de novedad
+
 AVISOS_DESBLOQUEO = {
-    2: "¡Novedad! Medialunas con frutilla.\nSacá una medialuna y pasala por la estación de Frutilla.",
-    3: "¡Novedad! Medialunas con dulce de leche.\nPasá una medialuna por la estación de Dulce de leche.",
-    4: "¡Novedad! Café con vainilla.\nLlevá un café simple a la estación Vainilla.",
+    2: "¡Novedad! Medialunas con frutilla.\nSacá una medialuna y pasala por la estación de Frutilla.\n" + AVISO_TUTORIAL,
+    3: "¡Novedad! Medialunas con dulce de leche.\nPasá una medialuna por la estación de Dulce de leche.\n" + AVISO_TUTORIAL,
+    4: "¡Novedad! Café con vainilla.\nLlevá un café simple a la estación Vainilla.\n" + AVISO_TUTORIAL,
 }
 
 NIVELES = {
@@ -286,8 +289,12 @@ ARCHIVOS_SONIDO = {
 ARCHIVO_MUSICA = "musica_lofi.wav"
 # Los .wav ya vienen parejos (misma sonoridad, ver generar_sonidos.py). Estos volúmenes son
 # los que se usan en el juego: el general y un ajuste fino por sonido (1.0 = sin cambios).
-VOLUMEN_EFECTOS = 0.6
-VOLUMEN_MUSICA = 0.5
+# Volúmenes al 100% del control de la pausa. El juego arranca en VOLUMEN_INICIAL (0.7), que suena igual
+# que antes; con las flechas en la pausa se baja hasta silencio o se sube un poco más.
+VOLUMEN_EFECTOS = 0.86
+VOLUMEN_MUSICA = 0.72
+VOLUMEN_INICIAL = 0.7
+PASO_VOLUMEN = 0.1
 VOLUMEN_RELATIVO = {"miau": 0.8, "vapor": 0.9, "caja": 0.85, "dia_completo": 0.9}
 
 # ---------------------------------------------------------------- textos
@@ -326,3 +333,19 @@ VINETAS = [
  "y si te entusiasmás, en el ropero del fondo hay delantales y gorritos re coquetos. "
  "¡Mucho éxito en tu primer día!\"")
 ]
+
+
+# ---------------------------------------------------------------- tutorial de Don Salmón y menú de pausa
+TUTORIAL = "TUTORIAL"                              # estado: Don Salmón te explica cómo se juega
+RECT_TUTORIAL_ILUSTRACION = (32, 14, 896, 276)     # cuadro de arriba, donde se muestra todo
+RECT_TUTORIAL_TEXTO = (190, 300, 738, 262)         # globito de texto de Don Salmón
+POS_DON_SALMON_TUTORIAL = (110, 562)               # donde apoya los pies Don Salmón
+ESCALA_DON_SALMON_TUTORIAL = 2.0
+BOTONES_TUTORIAL = {"saltar": (32, 574, 170, 42), "atras": (606, 574, 150, 42),
+                    "siguiente": (766, 574, 162, 42)}
+
+RECT_PANEL_PAUSA = (180, 96, 600, 448)
+BOTONES_PAUSA = {"musica": (200, 180, 176, 46), "efectos": (392, 180, 176, 46),
+                 "tutorial": (584, 180, 176, 46), "continuar": (330, 474, 300, 50),
+                 "vol_menos": (322, 240, 40, 40), "vol_mas": (592, 240, 40, 40)}
+RECT_BARRA_VOLUMEN = (370, 240, 214, 40)           # 10 tramos clickeables entre los botones - y +

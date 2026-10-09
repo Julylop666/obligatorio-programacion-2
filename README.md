@@ -1,4 +1,4 @@
-# Michi Café 2D
+# Purr & Brew 2D
 
 Juego cozy de cafetería en pixel art hecho con Python y Pygame para Programación 2 (Facultad de Diseño, Universidad ORT Uruguay).
 

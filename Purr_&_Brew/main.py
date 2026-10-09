@@ -1,9 +1,12 @@
-"""main.py -  Purr & Brew 2D: bucle principal y máquina de estados.
+"""main.py - Purr & Brew 2D: bucle principal y máquina de estados.
 
-Estados: HISTORIA_INTRO -> SELECCION_GATO -> JUGANDO -> DIA_COMPLETADO
+Estados: HISTORIA_INTRO -> SELECCION_GATO -> TUTORIAL (Don Salmón explica en 3 páginas, la primera vez)
+         -> JUGANDO -> DIA_COMPLETADO
          -> TIENDA_MEJORAS -> JUGANDO (día siguiente) ... -> VICTORIA_FINAL
          (y DERROTA si el local se desborda; con R se vuelve a jugar sin cerrar).
-Durante JUGANDO se puede pausar con P, Esc o el botón || del HUD.
+Durante JUGANDO se puede pausar con P, Esc o el botón || del HUD. La música (M) y los sonidos (N) se
+silencian en cualquier momento, también sin pausar. En la pausa además se regula el volumen (flechas
+izquierda/derecha, + y - o clic en la barra) y se vuelve a ver el tutorial (T).
 """
 import os
 import random
@@ -15,12 +18,13 @@ from jugador import Jugador
 from estaciones import crear_estaciones, crear_mesas
 from clientes import crear_cliente, asignar_mesas
 from dibujo import (dibujar_gato, dibujar_item, dibujar_panel, texto_envuelto,
-                    texto_centrado, frame_caminata)
+                    texto_centrado, frame_caminata, dibujar_boton)
 from escenas import crear_escenas
 from ventana import VentanaDia
+from tutorial import Tutorial
 
 
-def cargar_sonidos():
+def cargar_sonidos(volumen=VOLUMEN_INICIAL):
     """Carga los efectos UNA sola vez. Devuelve un diccionario {clave: Sound}.
 
     Si no hay placa de sonido o falta algún archivo, avisa por consola y el juego sigue.
@@ -37,19 +41,19 @@ def cargar_sonidos():
         ruta = os.path.join(RUTA_SONIDOS, archivo)
         try:
             sonido = pygame.mixer.Sound(ruta)
-            sonido.set_volume(VOLUMEN_EFECTOS * VOLUMEN_RELATIVO.get(clave, 1.0))
+            sonido.set_volume(VOLUMEN_EFECTOS * VOLUMEN_RELATIVO.get(clave, 1.0) * volumen)
             sonidos[clave] = sonido
         except (pygame.error, FileNotFoundError) as error:
             print(f"Aviso: no se pudo cargar {ruta}: {error}")
     return sonidos
 
 
-def iniciar_musica():
+def iniciar_musica(volumen=VOLUMEN_INICIAL):
     """Carga y reproduce en loop la música de fondo. Devuelve True si pudo, False si no."""
     ruta = os.path.join(RUTA_SONIDOS, ARCHIVO_MUSICA)
     try:
         pygame.mixer.music.load(ruta)
-        pygame.mixer.music.set_volume(VOLUMEN_MUSICA)
+        pygame.mixer.music.set_volume(VOLUMEN_MUSICA * volumen)
         pygame.mixer.music.play(-1)
         return True
     except (pygame.error, FileNotFoundError) as error:
@@ -124,11 +128,18 @@ class Juego:
         self.fuente_m = cargar_fuente(30)
         self.fuente_s = cargar_fuente(22)
         self.fuente_xs = cargar_fuente(18)      # etiquetas de las estaciones
-        self.sonidos = cargar_sonidos()
-        self.musica_ok = iniciar_musica() if self.sonidos else False
+        self.volumen = VOLUMEN_INICIAL          # control de volumen de la pausa (0.0 a 1.0)
+        self.sonidos = cargar_sonidos(self.volumen)
+        self.musica_ok = iniciar_musica(self.volumen) if self.sonidos else False
+        self.musica_activada = True            # lo que elige el jugador en el menú de pausa
+        self.efectos_activados = True
         self.fondo = crear_fondo()
         self.ventana = VentanaDia()
         self.escenas = crear_escenas(self.fuente_titulo, self.fuente_l)
+        self.tutorial = Tutorial({"xl": self.fuente_xl, "l": self.fuente_l, "m": self.fuente_m,
+                                  "s": self.fuente_s, "xs": self.fuente_xs})
+        self.tutorial_visto = False            # se muestra solo la primera vez (después, con T en la pausa)
+        self.tutorial_desde_pausa = False
         self.velo_pausa = pygame.Surface((ANCHO, ALTO), pygame.SRCALPHA)
         self.velo_pausa.fill(COLOR_VELO_PAUSA)
         self.estado = HISTORIA_INTRO
@@ -141,7 +152,7 @@ class Juego:
     # ------------------------------------------------------------ utilidades
     def reproducir(self, clave):
         """Reproduce un efecto de sonido si existe."""
-        if clave in self.sonidos:
+        if self.efectos_activados and clave in self.sonidos:
             self.sonidos[clave].play()
 
     def avisar(self, texto, duracion=DURACION_AVISO):
@@ -170,6 +181,7 @@ class Juego:
         self.mesas = crear_mesas()
         self.t_llegada = 0.0
         self.ventana.reiniciar()
+        self.actualizar_musica()                      # reiniciar desde la pausa no deja la música callada
 
     def iniciar_dia(self):
         """Prepara un día de trabajo: salón vacío, meta del día y primer cliente en 2 segundos."""
@@ -191,11 +203,107 @@ class Juego:
     def cambiar_pausa(self):
         """Pausa o reanuda el juego (también pausa la música)."""
         self.pausado = not self.pausado
+        self.actualizar_musica()
+
+    def actualizar_musica(self):
+        """Hace que la música suene solo si está activada y el juego no está en pausa."""
+        if not self.musica_ok:
+            return
+        if self.musica_activada and not self.pausado:
+            pygame.mixer.music.unpause()
+        else:
+            pygame.mixer.music.pause()
+
+    def alternar_musica(self):
+        """Prende o apaga la música (botón del menú de pausa o tecla M)."""
+        if not self.musica_ok:
+            self.avisar("La música no está disponible (mirá la consola).")
+            return
+        self.musica_activada = not self.musica_activada
+        self.actualizar_musica()
+        self.avisar_audio("Música", self.musica_activada)
+
+    def alternar_efectos(self):
+        """Prende o apaga los efectos de sonido (botón del menú de pausa o tecla N)."""
+        if not self.sonidos:
+            self.avisar("Los sonidos no están disponibles (mirá la consola).")
+            return
+        self.efectos_activados = not self.efectos_activados
+        if self.efectos_activados:
+            self.reproducir("topping")                # un sonidito para confirmar que ya suenan
+        else:
+            pygame.mixer.stop()                       # corta los efectos que estén sonando (no la música)
+        self.avisar_audio("Sonidos", self.efectos_activados)
+
+    def avisar_audio(self, nombre, activado):
+        """Cartelito 'Música: apagada' al silenciar sin pausa (en la pausa ya lo dice el botón)."""
+        if not self.pausado and self.estado == JUGANDO:
+            self.avisar(f"{nombre}: {'prendida' if activado else 'apagada'}", 1.5)
+
+    def cambiar_volumen(self, nivel):
+        """Fija el volumen general (0.0 a 1.0, de a PASO_VOLUMEN) y se lo aplica a música y efectos."""
+        nivel = round(min(1.0, max(0.0, nivel)) / PASO_VOLUMEN) * PASO_VOLUMEN
+        self.volumen = round(nivel, 2)
+        for clave, sonido in self.sonidos.items():
+            sonido.set_volume(VOLUMEN_EFECTOS * VOLUMEN_RELATIVO.get(clave, 1.0) * self.volumen)
         if self.musica_ok:
-            if self.pausado:
-                pygame.mixer.music.pause()
-            else:
-                pygame.mixer.music.unpause()
+            pygame.mixer.music.set_volume(VOLUMEN_MUSICA * self.volumen)
+        self.reproducir("topping")                    # un sonidito para escuchar cómo quedó
+
+    def subir_volumen(self, paso):
+        """Sube (paso > 0) o baja (paso < 0) el volumen un escalón."""
+        self.cambiar_volumen(self.volumen + paso * PASO_VOLUMEN)
+
+    def abrir_tutorial(self, desde_pausa):
+        """Muestra el tutorial de Don Salmón. Si se abrió desde la pausa, al cerrarlo se vuelve a ella."""
+        self.tutorial.reiniciar(desde_pausa)
+        self.tutorial_desde_pausa = desde_pausa
+        self.tutorial_visto = True
+        self.estado = TUTORIAL
+
+    def cerrar_tutorial(self):
+        """Termina o salta el tutorial: vuelve a la pausa o arranca el día, según de dónde venga."""
+        if self.tutorial_desde_pausa:
+            self.estado = JUGANDO                     # sigue pausado: reaparece el menú de pausa
+        else:
+            self.iniciar_dia()
+
+    def pasar_pagina_tutorial(self):
+        """Avanza una página del tutorial; después de la última lo cierra."""
+        if self.tutorial.siguiente():
+            self.cerrar_tutorial()
+
+    def clic_tutorial(self, pos):
+        """Clic en uno de los botones de abajo del tutorial."""
+        accion = self.tutorial.clic(pos)
+        if accion == "siguiente":
+            self.pasar_pagina_tutorial()
+        elif accion == "atras":
+            self.tutorial.anterior()
+        elif accion == "saltar":
+            self.cerrar_tutorial()
+
+    def clic_pausa(self, pos):
+        """Clic con el juego en pausa: botones del menú; un clic afuera del menú sigue el juego."""
+        botones = {nombre: pygame.Rect(rect) for nombre, rect in BOTONES_PAUSA.items()}
+        if pygame.Rect(BOTON_PAUSA).collidepoint(pos) or botones["continuar"].collidepoint(pos):
+            self.cambiar_pausa()
+        elif botones["musica"].collidepoint(pos):
+            self.alternar_musica()
+        elif botones["efectos"].collidepoint(pos):
+            self.alternar_efectos()
+        elif botones["tutorial"].collidepoint(pos):
+            self.abrir_tutorial(True)
+        elif botones["vol_menos"].collidepoint(pos):
+            self.subir_volumen(-1)
+        elif botones["vol_mas"].collidepoint(pos):
+            self.subir_volumen(1)
+        elif pygame.Rect(RECT_BARRA_VOLUMEN).collidepoint(pos):
+            barra = pygame.Rect(RECT_BARRA_VOLUMEN)
+            tramo = int((pos[0] - barra.left) * 10 / barra.width) + 1      # 1 a 10
+            self.cambiar_volumen(tramo * PASO_VOLUMEN)
+        elif not pygame.Rect(RECT_PANEL_PAUSA).collidepoint(pos):
+            self.cambiar_pausa()
 
     def comprar(self, clave):
         """Intenta comprar una prenda. Descuenta del monedero y se la pone al gato."""
@@ -230,21 +338,44 @@ class Juego:
         """Procesa un evento de pygame. Devuelve False si hay que cerrar el juego."""
         if evento.type == pygame.QUIT:
             return False
+        if evento.type == pygame.MOUSEBUTTONDOWN and evento.button == 1 and self.estado == TUTORIAL:
+            self.clic_tutorial(evento.pos)
+            return True
         if evento.type == pygame.MOUSEBUTTONDOWN and evento.button == 1 and self.estado == JUGANDO:
-            if self.pausado or pygame.Rect(BOTON_PAUSA).collidepoint(evento.pos):
+            if self.pausado:
+                self.clic_pausa(evento.pos)
+            elif pygame.Rect(BOTON_PAUSA).collidepoint(evento.pos):
                 self.cambiar_pausa()
             return True
         if evento.type != pygame.KEYDOWN:
             return True
         tecla = evento.key
         confirmar = tecla in (pygame.K_SPACE, pygame.K_RETURN)
-        if self.estado == JUGANDO and tecla in (pygame.K_p, pygame.K_ESCAPE):
+        if self.estado == TUTORIAL:
+            if confirmar or tecla in (pygame.K_RIGHT, pygame.K_d):
+                self.pasar_pagina_tutorial()
+            elif tecla in (pygame.K_LEFT, pygame.K_a):
+                self.tutorial.anterior()
+            elif tecla == pygame.K_ESCAPE:
+                self.cerrar_tutorial()
+            return True
+        if tecla == pygame.K_m:                          # silenciar rápido: vale en todo el juego
+            self.alternar_musica()
+        elif tecla == pygame.K_n:
+            self.alternar_efectos()
+        elif self.estado == JUGANDO and tecla in (pygame.K_p, pygame.K_ESCAPE):
             self.cambiar_pausa()
         elif self.estado == JUGANDO and self.pausado:
             if tecla == pygame.K_r:
                 self.nueva_partida()
                 self.vineta = -1
                 self.estado = HISTORIA_INTRO
+            elif tecla == pygame.K_t:
+                self.abrir_tutorial(True)
+            elif tecla in (pygame.K_RIGHT, pygame.K_PLUS, pygame.K_EQUALS, pygame.K_KP_PLUS):
+                self.subir_volumen(1)
+            elif tecla in (pygame.K_LEFT, pygame.K_MINUS, pygame.K_KP_MINUS):
+                self.subir_volumen(-1)
         elif self.estado == HISTORIA_INTRO and confirmar:
             self.vineta += 1
             if self.vineta >= len(VINETAS):
@@ -257,7 +388,10 @@ class Juego:
             elif confirmar:
                 self.jugador = Jugador(PELAJES[self.indice_gato][1])
                 self.reproducir("miau")
-                self.iniciar_dia()
+                if self.tutorial_visto:
+                    self.iniciar_dia()
+                else:
+                    self.abrir_tutorial(False)        # la primera vez, Don Salmón explica antes de abrir
         elif self.estado == JUGANDO and tecla in (pygame.K_e, pygame.K_SPACE):
             self.interactuar()
         elif self.estado == DIA_COMPLETADO and confirmar:
@@ -306,7 +440,8 @@ class Juego:
     def dibujar_aviso(self):
         """Dibuja el mensaje breve (de una o varias líneas) en un cartelito arriba del salón."""
         lineas = self.aviso_texto.split("\n")
-        textos = [self.fuente_m.render(linea, False, C["texto_claro"]) for linea in lineas]
+        textos = [self.fuente_s.render(linea, False, C["dorado"]) if linea == AVISO_TUTORIAL
+                  else self.fuente_m.render(linea, False, C["texto_claro"]) for linea in lineas]
         ancho = max(t.get_width() for t in textos) + 36
         alto = sum(t.get_height() for t in textos) + 18
         caja = pygame.Rect(0, 0, ancho, alto)
@@ -323,7 +458,8 @@ class Juego:
         dibujar_panel(self.pantalla, RECT_HUD, C["panel"])
         self.pantalla.blit(self.fuente_l.render(f"Día {self.dia}/{DIAS_TOTALES}", False, C["texto"]), (26, 17))
         boton = pygame.Rect(BOTON_PAUSA)                                # botón de pausa
-        dibujar_panel(self.pantalla, boton, C["azul"] if self.pausado else C["leche"])
+        sobre_boton = boton.collidepoint(pygame.mouse.get_pos())
+        dibujar_panel(self.pantalla, boton, C["azul"] if self.pausado else C["dorado"] if sobre_boton else C["leche"])
         for dx in (11, 21):
             pygame.draw.rect(self.pantalla, C["texto"], (boton.x + dx, boton.y + 9, 5, 18))
         barra = pygame.Rect(RECT_BARRA_META)
@@ -352,17 +488,49 @@ class Juego:
             self.dibujar_aviso()
 
     def dibujar_pausa(self):
-        """Dibuja el menú de pausa sobre el salón."""
+        """Dibuja el menú de pausa: botones de música, sonidos y tutorial, y la barra de volumen."""
         self.pantalla.blit(self.velo_pausa, (0, 0))
-        dibujar_panel(self.pantalla, (200, 170, 560, 320))
-        texto_centrado(self.pantalla, "PAUSA", self.fuente_xl, C["acento"], (ANCHO // 2, 225))
-        texto_centrado(self.pantalla, "P, Esc o clic para continuar", self.fuente_m, C["texto"], (ANCHO // 2, 305))
-        texto_centrado(self.pantalla, "R - Reiniciar partida", self.fuente_m, C["acento"], (ANCHO // 2, 345))
-        texto_centrado(self.pantalla, "Los vecinos esperan con paciencia.", self.fuente_s, C["texto"], (ANCHO // 2, 385))
+        dibujar_panel(self.pantalla, RECT_PANEL_PAUSA)
+        texto_centrado(self.pantalla, "PAUSA", self.fuente_xl, C["acento"], (ANCHO // 2, 138))
+        mouse = pygame.mouse.get_pos()
+        botones = {nombre: pygame.Rect(rect) for nombre, rect in BOTONES_PAUSA.items()}
+        etiqueta_musica = ("Música: SÍ [M]" if self.musica_activada else "Música: NO [M]") if self.musica_ok \
+            else "Música: no hay"
+        etiqueta_efectos = ("Sonidos: SÍ [N]" if self.efectos_activados else "Sonidos: NO [N]") if self.sonidos \
+            else "Sonidos: no hay"
+        for nombre, etiqueta, color, activo in (
+                ("musica", etiqueta_musica, C["verde"], self.musica_ok and self.musica_activada),
+                ("efectos", etiqueta_efectos, C["verde"], bool(self.sonidos) and self.efectos_activados),
+                ("tutorial", "Tutorial [T]", C["azul"], True),
+                ("continuar", "Continuar [P]", C["dorado"], True),
+                ("vol_menos", "-", C["leche"], self.volumen > 0),
+                ("vol_mas", "+", C["leche"], self.volumen < 1)):
+            dibujar_boton(self.pantalla, botones[nombre], etiqueta, self.fuente_s, color,
+                          resaltado=botones[nombre].collidepoint(mouse), activo=activo)
+        self.dibujar_barra_volumen()
+        texto_centrado(self.pantalla, "P, Esc o clic afuera para continuar", self.fuente_m, C["texto"], (ANCHO // 2, 322))
+        texto_centrado(self.pantalla, "R - Reiniciar partida", self.fuente_m, C["acento"], (ANCHO // 2, 356))
+        texto_centrado(self.pantalla, "Los vecinos esperan con paciencia.", self.fuente_s, C["texto"], (ANCHO // 2, 390))
         texto_centrado(self.pantalla, "WASD / flechas: moverte  -  E / Espacio: interactuar",
-                       self.fuente_s, C["texto"], (ANCHO // 2, 420))
-        estado_audio = "Sonido: activado" if self.sonidos else "Sonido: no disponible (mirá la consola)"
-        texto_centrado(self.pantalla, estado_audio, self.fuente_s, C["acento"], (ANCHO // 2, 455))
+                       self.fuente_s, C["texto"], (ANCHO // 2, 418))
+        if not self.sonidos:
+            texto_centrado(self.pantalla, "Sonido: no disponible (mirá la consola)", self.fuente_s, C["acento"],
+                           (ANCHO // 2, 446))
+        else:
+            texto_centrado(self.pantalla, "Flechas izq/der o + / -: volumen", self.fuente_s, C["acento"],
+                           (ANCHO // 2, 446))
+
+    def dibujar_barra_volumen(self):
+        """Dibuja 'Volumen', la barra de 10 tramos (entre los botones - y +) y el porcentaje."""
+        self.pantalla.blit(self.fuente_m.render("Volumen", False, C["texto"]), (200, 247))
+        barra = pygame.Rect(RECT_BARRA_VOLUMEN)
+        lleno = round(self.volumen / PASO_VOLUMEN)
+        ancho = barra.width // 10
+        for i in range(10):
+            tramo = pygame.Rect(barra.left + i * ancho, barra.top + 6, ancho - 3, barra.height - 12)
+            pygame.draw.rect(self.pantalla, C["verde"] if i < lleno else C["sombra"], tramo)
+            pygame.draw.rect(self.pantalla, C["zocalo"], tramo, 2)
+        texto_centrado(self.pantalla, f"{round(self.volumen * 100)}%", self.fuente_m, C["acento"], (700, 260))
 
     def dibujar_salon(self):
         """Dibuja el fondo del salón y la ventana con el cielo del momento del día."""
@@ -383,7 +551,7 @@ class Juego:
         self.jugador.dibujar(self.pantalla)
         self.dibujar_hud()
         if cercano is not None and not self.pausado:
-            texto_centrado(self.pantalla, "E / Espacio: interactuar  -  P: pausa", self.fuente_s, C["texto"],
+            texto_centrado(self.pantalla, "E / Espacio: interactuar  -  P: pausa  -  M / N: música y sonidos", self.fuente_s, C["texto"],
                            (ANCHO // 2, ALTO - 14))
         if self.pausado:
             self.dibujar_pausa()
@@ -467,6 +635,8 @@ class Juego:
             self.dibujar_seleccion()
         elif self.estado == JUGANDO:
             self.dibujar_juego()
+        elif self.estado == TUTORIAL:
+            self.tutorial.dibujar(self.pantalla, pygame.mouse.get_pos())
         elif self.estado == TIENDA_MEJORAS:
             self.dibujar_tienda()
         elif self.estado == DIA_COMPLETADO:

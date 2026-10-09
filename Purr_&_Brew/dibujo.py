@@ -88,6 +88,25 @@ def texto_centrado(pantalla, texto, fuente, color, centro):
     pantalla.blit(superficie, superficie.get_rect(center=centro))
 
 
+def dibujar_boton(pantalla, rect, texto, fuente, color=None, resaltado=False, activo=True):
+    """Dibuja un botón pixel art clickeable con texto centrado y devuelve su Rect.
+
+    resaltado: se ilumina (por ejemplo cuando el mouse está encima).
+    activo=False lo deja gris, para opciones apagadas o que no están disponibles.
+    """
+    rect = pygame.Rect(rect)
+    base = color or C["leche"]
+    if not activo:
+        base = C["sombra"]
+    elif resaltado:
+        base = aclarar(base, 0.45)
+    dibujar_panel(pantalla, rect, base)
+    if resaltado and activo:
+        pygame.draw.rect(pantalla, C["dorado"], rect.inflate(2, 2), 3)
+    texto_centrado(pantalla, texto, fuente, C["texto"] if activo else C["metal_oscuro"], rect.center)
+    return rect
+
+
 # ---------------------------------------------------------------- ítems (pixel art)
 _PAL_ITEM = {
     "O": C["contorno"],
