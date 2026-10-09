@@ -64,18 +64,28 @@ Cada pedido aparece en un globito sobre el cliente. Entregalo en su mesa y despu
 
 ## Instalación y ejecución
 
-Requiere Python 3.9 o superior.
+Requiere Python 3.9 o superior. En Windows, si no tenés Python instalado, podés instalar Python 3.12 desde PowerShell o la terminal con:
 
-```bash
-pip install -r requirements.txt
-python main.py
+```powershell
+winget install --id Python.Python.3.12 --exact
 ```
 
-Es la única biblioteca externa. Para correr las pruebas: `python -m unittest test_cambios test_tutorial`. Ejecutá siempre `main.py` desde la carpeta del juego (o con la carpeta completa, con `sonidos/` y `fuentes/` al lado).
+Al terminar, cerrá y volvé a abrir la terminal para que reconozca el comando `py`. Si no tenés `winget`, descargá Python desde [python.org](https://www.python.org/downloads/) y, durante la instalación, marcá **Add python.exe to PATH**.
+
+Desde esta carpeta (`Purr_&_Brew`), instalá la biblioteca que usa el juego y ejecutalo:
+
+```powershell
+py -m pip install -r requirements.txt
+py main.py
+```
+
+`requirements.txt` instala `pygame-ce`, la única biblioteca externa de Python que necesita el juego. No hace falta instalar SDL ni otras bibliotecas del sistema por separado: la instalación normal de `pygame-ce` se encarga de sus componentes. Los sonidos (`sonidos/`) y la tipografía (`fuentes/`) ya están incluidos en el repositorio. No se necesitan otros programas, servicios ni descargas para jugar.
+
+Para correr las pruebas desde esta misma carpeta: `py -m unittest test_cambios test_tutorial`. Ejecutá siempre `main.py` desde la carpeta del juego (o con la carpeta completa, con `sonidos/` y `fuentes/` al lado).
 
 ### Si no se escucha el sonido
 Al iniciar, el juego imprime en la consola `Audio iniciado: (...)` si pudo abrir el audio, o un `Aviso:` con el motivo si algo falló.
-Revisá que (1) el volumen del menú de pausa no esté en 0 y que la música y los sonidos no estén apagados (M / N), (2) la carpeta `sonidos/` esté junto a `main.py`, (3) el volumen de la compu y del mezclador de Windows (pygame / python) no esté silenciado, (4) tengas la última versión de pygame (`pip install --upgrade pygame`).
+Revisá que (1) el volumen del menú de pausa no esté en 0 y que la música y los sonidos no estén apagados (M / N), (2) la carpeta `sonidos/` esté junto a `main.py`, (3) el volumen de la compu y del mezclador de Windows (pygame / python) no esté silenciado, (4) tengas la última versión de pygame-ce (`py -m pip install --upgrade pygame-ce`).
 En el menú de pausa también aparece si el sonido está activado.
 
 ## Qué hay en cada archivo
