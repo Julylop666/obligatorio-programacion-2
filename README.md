@@ -32,6 +32,8 @@ No hay temporizadores ni clientes enojados: los vecinos esperan con paciencia.
 
 **Menú de pausa:** además de reanudar (P, Esc, botón **Continuar** o clic afuera del menú) y reiniciar (R), tiene botones clickeables para apagar la **música**, apagar los **sonidos**, regular el **volumen** y abrir el **tutorial**.
 
+**Pantalla completa:** apretá **F11** en cualquier momento (también en la pausa, el tutorial o la tienda) para pasar a pantalla completa, y **F11** de nuevo para volver a la ventana. El juego se escala solo al tamaño de tu pantalla, sin deformarse, y el mouse sigue funcionando igual.
+
 Cada pedido aparece en un globito sobre el cliente. Entregalo en su mesa y después juntá el dinero que deja.
 
 | Ítem | Precio |
@@ -50,6 +52,7 @@ Cada pedido aparece en un globito sobre el cliente. Entregalo en su mesa y despu
 | P / Esc / botón `\|\|` (clic) | Pausar y reanudar |
 | M | Prender / apagar la música (también jugando) |
 | N | Prender / apagar los sonidos (también jugando) |
+| F11 | Pantalla completa: prender / apagar (en cualquier momento del juego) |
 | Flechas izquierda / derecha, + / - (en la pausa) | Bajar / subir el volumen |
 | T (en la pausa) | Volver a ver el tutorial |
 | Flechas / Espacio / Esc (en el tutorial) | Página siguiente o anterior / saltar |
