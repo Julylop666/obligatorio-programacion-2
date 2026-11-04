@@ -1,0 +1,356 @@
+"""dibujo.py - Funciones de dibujo en estilo PIXEL ART (el juego no usa imágenes externas).
+
+Los sprites (gatos, ítems, íconos) están escritos como grillas de texto: cada letra
+es un pixel del arte y la paleta dice de qué color es cada letra. La función
+pixelar() convierte la grilla en una Surface agrandada con "vecino más cercano",
+así los pixeles quedan nítidos. Podés editar las grillas para cambiar el dibujo.
+"""
+import functools
+import pygame
+from ajustes import (COLORES_PASTEL as C, PX_GATO, PX_ITEM, COLOR_OJOS_CLIENTE, ALTO_SOMBRERO,
+                     VELOCIDAD_ANIMACION, GROSOR_BORDE_PANEL)
+
+
+# ---------------------------------------------------------------- colores y pixelado
+def oscurecer(color, factor=0.8):
+    """Devuelve el mismo color pero más oscuro (factor < 1)."""
+    return tuple(int(canal * factor) for canal in color)
+
+
+def aclarar(color, factor=0.5):
+    """Devuelve el mismo color pero más claro (factor entre 0 y 1)."""
+    return tuple(int(canal + (255 - canal) * factor) for canal in color)
+
+
+@functools.lru_cache(maxsize=None)
+def _pixelar(grilla, paleta, px):
+    """Versión con caché de pixelar() (los argumentos tienen que ser hashables)."""
+    colores = dict(paleta)
+    ancho = max(len(fila) for fila in grilla)
+    chica = pygame.Surface((ancho, len(grilla)), pygame.SRCALPHA)
+    for y, fila in enumerate(grilla):
+        for x, letra in enumerate(fila):
+            if letra in colores:
+                chica.set_at((x, y), colores[letra])
+    return pygame.transform.scale(chica, (ancho * px, len(grilla) * px))
+
+
+def pixelar(grilla, paleta, px):
+    """Convierte una grilla de texto en una Surface pixel art agrandada px veces.
+
+    grilla: lista de strings (una letra = un pixel, '.' = transparente).
+    paleta: diccionario {letra: (r, g, b)}.
+    """
+    return _pixelar(tuple(grilla), tuple(sorted(paleta.items())), px)
+
+
+# ---------------------------------------------------------------- paneles y texto
+def dibujar_panel(pantalla, rect, color=None, radio=18):
+    """Dibuja un panel pixel art (esquinas escalonadas) y devuelve su Rect.
+
+    El parámetro radio se conserva por compatibilidad y no se usa.
+    """
+    color = color or C["panel"]
+    rect = pygame.Rect(rect)
+    b = GROSOR_BORDE_PANEL
+    x, y, w, h = rect
+    for caja in ((x + b, y, w - 2 * b, h), (x, y + b, w, h - 2 * b)):
+        pygame.draw.rect(pantalla, C["zocalo"], caja)
+    for caja in ((x + 2 * b, y + b, w - 4 * b, h - 2 * b), (x + b, y + 2 * b, w - 2 * b, h - 4 * b)):
+        pygame.draw.rect(pantalla, color, caja)
+    return rect
+
+
+def texto_envuelto(pantalla, texto, fuente, color, rect, interlineado=4):
+    """Escribe texto partiéndolo en líneas para que entre en el rect.
+
+    Devuelve la coordenada y donde terminó el texto.
+    """
+    y = rect.top
+    linea = ""
+    for palabra in texto.split():
+        prueba = (linea + " " + palabra).strip()
+        if fuente.size(prueba)[0] <= rect.width:
+            linea = prueba
+        else:
+            pantalla.blit(fuente.render(linea, False, color), (rect.left, y))
+            y += fuente.get_height() + interlineado
+            linea = palabra
+    if linea:
+        pantalla.blit(fuente.render(linea, False, color), (rect.left, y))
+        y += fuente.get_height() + interlineado
+    return y
+
+
+def texto_centrado(pantalla, texto, fuente, color, centro):
+    """Escribe una línea de texto centrada en el punto dado."""
+    superficie = fuente.render(texto, False, color)
+    pantalla.blit(superficie, superficie.get_rect(center=centro))
+
+
+def dibujar_boton(pantalla, rect, texto, fuente, color=None, resaltado=False, activo=True):
+    """Dibuja un botón pixel art clickeable con texto centrado y devuelve su Rect.
+
+    resaltado: se ilumina (por ejemplo cuando el mouse está encima).
+    activo=False lo deja gris, para opciones apagadas o que no están disponibles.
+    """
+    rect = pygame.Rect(rect)
+    base = color or C["leche"]
+    if not activo:
+        base = C["sombra"]
+    elif resaltado:
+        base = aclarar(base, 0.45)
+    dibujar_panel(pantalla, rect, base)
+    if resaltado and activo:
+        pygame.draw.rect(pantalla, C["dorado"], rect.inflate(2, 2), 3)
+    texto_centrado(pantalla, texto, fuente, C["texto"] if activo else C["metal_oscuro"], rect.center)
+    return rect
+
+
+# ---------------------------------------------------------------- ítems (pixel art)
+_PAL_ITEM = {
+    "O": C["contorno"],
+    "W": C["leche"],
+    "M": C["espuma"],
+    "C": C["cafe"],
+    "Y": C["masa_clara"],
+    "D": C["masa_oscura"],
+    "K": C["chocolate"],
+    "Q": C["caramelo"],
+    "V": C["vainilla"],  # Amarillo cálido/dorado para el jarabe de vainilla
+    "S": C["masa_sombra"],
+    "R": C["frutilla_cobertura"],  # Cobertura rosa de frutilla
+}
+
+_CAFE = (
+    ".OOOOOOO..",
+    "OMMCCMMO..",
+    "OWWWWWWOOO",
+    "OWWWWWWO.O",
+    "OWWWWWWOOO",
+    ".OWWWWOO..",
+    "..OOOOOO..",
+)
+
+# Café con chorro claro de syrup de vainilla arriba
+_CAFE_SYRUP = (
+    "..VVVV....",
+    "OMVVVVMMO.",
+    "OWWVVVWWOO",
+    "OWWWWWWO.O",
+    "OWWWWWWOOO",
+    ".OWWWWOO..",
+    "..OOOOOO..",
+)
+
+_MEDIALUNA = (
+    "....OOOO....",
+    "..OOYYYYOO..",
+    ".OYYDYYDYYO.",
+    "OYYO.OO.OYYO",
+    "OYO......OYO",
+    ".O........O.",
+)
+
+
+def _con_puntos(grilla, puntos, letra):
+    """Devuelve una copia de la grilla con la letra puesta en cada (x, y) de puntos."""
+    filas = [list(fila) for fila in grilla]
+    for x, y in puntos:
+        filas[y][x] = letra
+    return tuple("".join(fila) for fila in filas)
+
+
+# Cobertura de frutilla (rosa "R") en el centro de la medialuna, estilo dulce de leche
+_MEDIALUNA_FRUTILLA = _con_puntos(
+    _MEDIALUNA,
+    [(4, 1), (5, 1), (6, 1), (7, 1), (3, 2), (5, 2), (6, 2), (8, 2), (2, 3), (9, 3)],
+    "R"
+)
+
+ITEMS_PIXEL = {
+    "cafe": _CAFE,
+    "cafe_syrup": _CAFE_SYRUP,
+    "medialuna": _MEDIALUNA,
+    "medialuna_frutilla": _MEDIALUNA_FRUTILLA,
+    "medialuna_dulce": _con_puntos(_MEDIALUNA, [(4, 1), (5, 1), (6, 1), (7, 1), (3, 2), (5, 2), (6, 2),
+                                                (8, 2), (2, 3), (9, 3)], "Q"),
+}
+
+
+def dibujar_item(pantalla, item, centro, escala=1.0, base=False, px=None):
+    """Dibuja el ícono pixel art de un ítem ('cafe', 'medialuna', 'medialuna_frutilla', ...).
+
+    centro: punto central del ítem (o el punto de apoyo de abajo si base=True).
+    px: tamaño del pixel; si no se indica se calcula a partir de escala.
+    """
+    px = px or max(1, int(escala * 2.5 + 0.5))
+    sprite = pixelar(ITEMS_PIXEL.get(item, _CAFE), _PAL_ITEM, px)
+    rect = sprite.get_rect()
+    if base:
+        rect.midbottom = centro
+    else:
+        rect.center = centro
+    pantalla.blit(sprite, rect)
+
+
+# ---------------------------------------------------------------- gatos (pixel art)
+_ZAPATOS = [None, C["zapato_celeste"], C["zapato_verde"]]    # color según el nivel de calzado
+
+_GATO_CUERPO = (
+    "..OO........OO..",
+    ".OFFO......OFFO.",
+    ".OFPFOOOOOOFPFO.",
+    ".OFFFFFFFFFFFFO.",
+    ".OFFFFFFFFFFFFO.",
+    ".OFFEEFFFFEEFFO.",
+    ".OFFEEFFFFEEFFO.",
+    ".OFFFFFNNFFFFFO.",
+    ".OFFFLLLLLLFFFO.",
+    "..OFFFFFFFFFFO..",
+    "...OOOOOOOOOO...",
+    "...OFFFFFFFFO...",
+    "...OFLLLLLLFO...",
+    "...OFLLLLLLFO...",
+    "...OFFFFFFFFO...",
+)
+_PIES_1 = "...OSSSOOSSSO..."                  # fila de las patitas (S = zapato o pelaje)
+_PIES_2 = {0: "....OOO..OOO....", 1: "....OOO.........",
+           2: "....OOO..OOO....", 3: ".........OOO...."}   # al caminar una patita se levanta
+_COLA_PELO = [(13, 14), (14, 14), (14, 13), (14, 12), (14, 11)]
+_COLA_BORDE = [(13, 13), (15, 11), (15, 12), (15, 13), (15, 14), (13, 15), (14, 15), (14, 10)]
+_ANTEOJOS = ([(x, 4) for x in (3, 4, 5, 6, 9, 10, 11, 12)] + [(x, 7) for x in (3, 4, 5, 6, 9, 10, 11, 12)]
+             + [(x, y) for x in (3, 6, 9, 12) for y in (5, 6)] + [(7, 5), (8, 5)])
+
+_COFIA = (".....OOOOOO.....",
+          "....OWWWWWWO....",
+          "....OPPPPPPO....")
+_SOMBRERO = ("....OOOOOOOO....",
+             "...OWWWWWWWWO...",
+             "..OWWWWWWWWWWO..",
+             "..OWWWWWWWWWWO..",
+             "...OWWWWWWWWO...",
+             "....OWWWWWWO....",
+             "....OPPPPPPO....")
+_DELANTAL = ("......WWWW......",
+             "....AAAAAAAA....",
+             "....AAAAAAAA....",
+             "....AAWWWWAA....",
+             "....AAWWWWAA....")
+_CHALECO = ("................",
+            "....VVV..VVV....",
+            "....VVV..VVV....",
+            "....VVV..VVV....",
+            "....VVV..VVV....")
+
+
+@functools.lru_cache(maxsize=None)
+def _construir_gato(color, ojos, gorro, delantal, calzado, lentes, chaleco, frame):
+    """Arma (una sola vez por combinación) el sprite chico de un gato. Devuelve una Surface."""
+    chica = pygame.Surface((16, ALTO_SOMBRERO + 17), pygame.SRCALPHA)
+    dy = ALTO_SOMBRERO - (1 if frame in (1, 3) else 0)
+    zapato = _ZAPATOS[calzado] or color
+    paleta = {"O": oscurecer(color, 0.38), "F": color, "L": aclarar(color, 0.55), "E": ojos,
+              "P": C["rosa_oreja"], "N": C["rosa_nariz"], "S": zapato}
+    ropa = {"O": C["contorno"], "W": C["blanco"], "P": C["cofia_verde"], "A": C["delantal_celeste"],
+            "V": C["chaleco_verde"]}
+
+    def poner(grilla, fila0, colores):
+        """Pinta una grilla de texto sobre el sprite chico, desde la fila fila0 (ropa, cuerpo, patas)."""
+        for y, fila in enumerate(grilla):
+            for x, letra in enumerate(fila):
+                if letra in colores and 0 <= fila0 + y < chica.get_height():
+                    chica.set_at((x, fila0 + y), colores[letra])
+
+    for x, y in _COLA_PELO:
+        chica.set_at((x, dy + y), color)
+    for x, y in _COLA_BORDE:
+        chica.set_at((x, dy + y), paleta["O"])
+    poner(_GATO_CUERPO, dy, paleta)
+    poner((_PIES_1, _PIES_2[frame]), dy + 15, paleta)
+    if chaleco:
+        poner(_CHALECO, dy + 10, ropa)
+    if delantal:
+        poner(_DELANTAL, dy + 10, ropa)
+    if lentes:
+        for x, y in _ANTEOJOS:
+            chica.set_at((x, dy + y), C["anteojos"])
+    if gorro == 1:
+        poner(_COFIA, dy - 1, ropa)
+    elif gorro == 2:
+        poner(_SOMBRERO, dy - 5, ropa)
+    return chica
+
+
+def frame_caminata(t_anim, camina):
+    """Devuelve qué cuadro de las patitas (0 a 3) toca mostrar según el tiempo caminando.
+
+    Si el gato está quieto devuelve 0 (patitas juntas).
+    """
+    if not camina:
+        return 0
+    return (1, 0, 3, 2)[int(t_anim * VELOCIDAD_ANIMACION) % 4]
+
+
+def dibujar_gato(pantalla, centro, color, ropa=None, escala=1.0, lentes=False, ojos=None,
+                 frame=0, mirando=1, chaleco=False):
+    """Dibuja un gato pixel art con su sombra, centrado en 'centro'.
+
+    color: pelaje. ropa: diccionario con 'gorro', 'delantal' y 'calzado' (como el del Jugador).
+    escala: tamaño relativo. frame: cuadro de las patitas. mirando: 1 derecha, -1 izquierda.
+    lentes y chaleco son para Don Salmón; ojos cambia el color de los ojos.
+    """
+    ropa = ropa or {}
+    px = max(1, round(escala * PX_GATO))
+    sprite = _construir_gato(tuple(color), tuple(ojos or COLOR_OJOS_CLIENTE), ropa.get("gorro", 0),
+                             bool(ropa.get("delantal")), ropa.get("calzado", 0), lentes,
+                             chaleco or bool(ropa.get("chaleco")), frame)
+    sprite = pygame.transform.scale(sprite, (sprite.get_width() * px, sprite.get_height() * px))
+    if mirando < 0:
+        sprite = pygame.transform.flip(sprite, True, False)
+    rect = sprite.get_rect(midbottom=(round(centro[0]), round(centro[1]) + 7 * px))
+    sombra = pygame.Rect(0, 0, 14 * px, 4 * px)
+    sombra.center = (rect.centerx, rect.bottom - px)
+    pygame.draw.ellipse(pantalla, C["sombra"], sombra)
+    pantalla.blit(sprite, rect)
+
+
+def dibujar_bandeja(pantalla, centro, items, capacidad, color, mirando=1, frame=0):
+    """Dibuja el bracito del gato sosteniendo una bandeja con los ítems que lleva.
+
+    capacidad define el ancho de la bandeja; mirando decide de qué lado del gato va.
+    """
+    cx, cy = centro
+    px, d = PX_GATO, mirando
+    borde = oscurecer(color, 0.38)
+    y_pies = cy + 7 * px - (px if frame in (1, 3) else 0)
+    ancho = capacidad * 26 + 18
+    centro_x = cx + d * (30 + ancho // 2)
+    y_plato = y_pies - 38
+    hombro = (cx + d * 10, y_pies - 18)
+    codo = (cx + d * 20, y_pies - 26)
+    mano = (centro_x - d * 8, y_plato + 8)
+    pygame.draw.line(pantalla, borde, hombro, codo, 9)
+    pygame.draw.line(pantalla, color, hombro, codo, 4)
+    pygame.draw.line(pantalla, borde, codo, mano, 7)
+    pygame.draw.line(pantalla, color, codo, mano, 3)
+    palma = pygame.Rect(0, 0, 20, 12)
+    palma.center = mano
+    pygame.draw.rect(pantalla, borde, palma.inflate(5, 5))
+    pygame.draw.rect(pantalla, color, palma)
+
+    plato = pygame.Rect(0, 0, ancho, 11)
+    plato.midtop = (centro_x, y_plato)
+    pygame.draw.rect(pantalla, C["contorno"], plato.inflate(7, 6))
+    pygame.draw.rect(pantalla, C["metal"], plato)
+    pygame.draw.rect(pantalla, C["metal_oscuro"], (plato.x, plato.bottom - 2, ancho, 2))
+    pygame.draw.line(pantalla, C["leche"], (plato.left + 3, plato.top + 2), (plato.right - 4, plato.top + 2), 2)
+
+    soportes = ((plato.left + 4, plato.top - 6, 6, 6), (plato.right - 10, plato.top - 6, 6, 6))
+    for lado, arriba, ancho_soporte, alto_soporte in soportes:
+        pygame.draw.rect(pantalla, C["contorno"], (lado, arriba, ancho_soporte, alto_soporte))
+        pygame.draw.rect(pantalla, C["metal"], (lado + 1, arriba + 1, ancho_soporte - 2, alto_soporte - 2))
+
+    for i, item in enumerate(items):
+        x = plato.left + 13 + i * 26
+        dibujar_item(pantalla, item, (x, plato.top - 1), base=True, px=PX_ITEM)

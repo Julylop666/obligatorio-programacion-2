@@ -119,7 +119,7 @@ class Juego:
         """Inicia pygame, ventana, fuentes, sonidos e ilustraciones (una vez) y el estado inicial."""
         pygame.mixer.pre_init(44100, -16, 2, 512)      # configuración de audio antes de pygame.init
         pygame.init()
-        self.pantalla = pygame.display.set_mode((ANCHO, ALTO))
+        self.pantalla = pygame.display.set_mode((ANCHO, ALTO), pygame.SCALED)
         pygame.display.set_caption(TITULO)
         self.reloj = pygame.time.Clock()
         self.fuente_titulo = cargar_fuente(120)
@@ -350,6 +350,9 @@ class Juego:
         if evento.type != pygame.KEYDOWN:
             return True
         tecla = evento.key
+        if tecla == pygame.K_F11:                        # pantalla completa: vale en todo el juego
+            pygame.display.toggle_fullscreen()
+            return True
         confirmar = tecla in (pygame.K_SPACE, pygame.K_RETURN)
         if self.estado == TUTORIAL:
             if confirmar or tecla in (pygame.K_RIGHT, pygame.K_d):
